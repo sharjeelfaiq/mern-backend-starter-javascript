@@ -277,9 +277,9 @@ npm run seed
 ## 🗂️ Project Structure
 
 ```
-🗂️ mern-backend-starter-js
-├── 🗂️ src
-│   ├── 🗂️ config
+├── 📁 .git/ 🚫 (auto-hidden)
+├── 📁 src/
+│   ├── 📁 config/
 │   │   ├── 📄 cloudinary.config.js
 │   │   ├── 📄 database.config.js
 │   │   ├── 📄 env.config.js
@@ -287,17 +287,17 @@ npm run seed
 │   │   ├── 📄 logger.config.js
 │   │   ├── 📄 mail.config.js
 │   │   └── 📄 swagger.config.js
-│   ├── 🗂️ constants
+│   ├── 📁 constants/
 │   │   └── 📄 index.js
-│   ├── 🗂️ docs
-│   │   └── 🗂️ swagger
-│   │       ├── 📄 auth.yaml
-│   │       ├── 📄 common.yaml
-│   │       ├── 📄 email.yaml
-│   │       ├── 📄 health.yaml
-│   │       └── 📄 notifications.yaml
-│   ├── 🗂️ middleware
-│   │   ├── 🗂️ common-middleware
+│   ├── 📁 docs/
+│   │   └── 📁 swagger/
+│   │       ├── ⚙️ auth.yaml
+│   │       ├── ⚙️ common.yaml
+│   │       ├── ⚙️ email.yaml
+│   │       ├── ⚙️ health.yaml
+│   │       └── ⚙️ notifications.yaml
+│   ├── 📁 middleware/
+│   │   ├── 📁 common-middleware/
 │   │   │   ├── 📄 colors.js
 │   │   │   ├── 📄 cors.js
 │   │   │   ├── 📄 error-handler.js
@@ -307,83 +307,87 @@ npm run seed
 │   │   ├── 📄 index.js
 │   │   ├── 📄 upload.middleware.js
 │   │   └── 📄 validator.middleware.js
-│   ├── 🗂️ models
+│   ├── 📁 models/
 │   │   ├── 📄 blacklisted-token.model.js
 │   │   ├── 📄 index.js
 │   │   ├── 📄 notification.model.js
 │   │   ├── 📄 otp.model.js
 │   │   └── 📄 user.model.js
-│   ├── 🗂️ modules
-│   │   ├── 🗂️ auth
+│   ├── 📁 modules/
+│   │   ├── 📁 auth/
 │   │   │   ├── 📄 auth.controllers.js
 │   │   │   ├── 📄 auth.dto.js
 │   │   │   ├── 📄 auth.routes.js
 │   │   │   └── 📄 auth.services.js
-│   │   ├── 🗂️ email
+│   │   ├── 📁 email/
 │   │   │   ├── 📄 email.controllers.js
 │   │   │   ├── 📄 email.routes.js
 │   │   │   └── 📄 email.services.js
-│   │   ├── 🗂️ health
+│   │   ├── 📁 health/
 │   │   │   ├── 📄 health.controllers.js
 │   │   │   ├── 📄 health.routes.js
 │   │   │   └── 📄 health.services.js
-│   │   ├── 🗂️ notification
+│   │   ├── 📁 notification/
 │   │   │   ├── 📄 notification.controllers.js
 │   │   │   ├── 📄 notification.routes.js
 │   │   │   └── 📄 notification.services.js
-│   │   ├── 🗂️ otp
+│   │   ├── 📁 otp/
 │   │   │   ├── 📄 otp.controllers.js
 │   │   │   ├── 📄 otp.routes.js
 │   │   │   └── 📄 otp.services.js
-│   │   ├── 🗂️ user
+│   │   ├── 📁 user/
 │   │   │   ├── 📄 user.controllers.js
 │   │   │   ├── 📄 user.routes.js
 │   │   │   └── 📄 user.services.js
 │   │   └── 📄 index.js
-│   ├── 🗂️ repository
+│   ├── 📁 repository/
 │   │   ├── 📄 blacklisted-token.repository.js
 │   │   ├── 📄 index.js
 │   │   ├── 📄 notification.repository.js
 │   │   ├── 📄 otp.repository.js
 │   │   └── 📄 user.repository.js
-│   ├── 🗂️ routes
+│   ├── 📁 routes/
 │   │   └── 📄 index.js
-│   ├── 🗂️ scripts
+│   ├── 📁 scripts/
 │   │   └── 📄 seed.js
-│   ├── 🗂️ server
+│   ├── 📁 server/
 │   │   ├── 📄 app.js
 │   │   ├── 📄 backend.server.js
 │   │   ├── 📄 index.js
 │   │   └── 📄 socket.server.js
-│   ├── 🗂️ utils
-│   │   ├── 🗂️ auth
+│   ├── 📁 utils/
+│   │   ├── 📁 auth/
 │   │   │   ├── 📄 otp.utils.js
 │   │   │   ├── 📄 password.utils.js
 │   │   │   ├── 📄 token.utils.js
 │   │   │   └── 📄 username.utils.js
-│   │   ├── 🗂️ communication
+│   │   ├── 📁 communication/
 │   │   │   └── 📄 mail.utils.js
-│   │   ├── 🗂️ core
+│   │   ├── 📁 core/
 │   │   │   ├── 📄 common.utils.js
 │   │   │   └── 📄 validations.utils.js
 │   │   └── 📄 index.js
-│   ├── 🗂️ views
-│   │   ├── 🗂️ otp-email
-│   │   │   └── 📄 index.html
-│   │   ├── 🗂️ reset-password
-│   │   │   └── 📄 index.html
-│   │   ├── 🗂️ verification-email
-│   │   │   └── 📄 index.html
-│   │   └── 🗂️ verification-notification
-│   │       └── 📄 index.html
+│   ├── 📁 views/
+│   │   ├── 📁 otp-email/
+│   │   │   └── 🌐 index.html
+│   │   ├── 📁 reset-password/
+│   │   │   └── 🌐 index.html
+│   │   ├── 📁 verification-email/
+│   │   │   └── 🌐 index.html
+│   │   └── 📁 verification-notification/
+│   │       └── 🌐 index.html
 │   └── 📄 index.js
-├── 📄 eslint.config.js
-├── 📄 LICENSE
+├── 📄 .env.development 🚫 (auto-hidden)
+├── 📄 .env.example
+├── 📄 .env.production 🚫 (auto-hidden)
+├── 🚫 .gitignore
+├── 📜 LICENSE
 ├── 📄 MERN Backend Starter.postman_collection.json
+├── 📖 README.md
+├── 📄 eslint.config.js
 ├── 📄 nodemon.json
 ├── 📄 package-lock.json
-├── 📄 package.json
-└── 📄 README.md
+└── 📄 package.json
 ```
 
 ## 📖 API Documentation
