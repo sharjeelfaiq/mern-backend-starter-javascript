@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-import { env, logger } from "#config/index.js";
+import { env } from "#config/env.config.js";
+import { logger } from "#config/logger.config.js";
 import { IS_PROD_ENV } from "#constants/index.js";
 
 const {

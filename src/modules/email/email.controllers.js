@@ -1,4 +1,4 @@
-import { commonUtils } from "#utils/index.js";
+import { commonUtils } from "#utils/common.utils.js";
 import { emailServices } from "./email.services.js";
 
 const { routesAsyncHandler } = commonUtils;

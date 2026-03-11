@@ -2,7 +2,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-import { env } from "#config/index.js";
+import { env } from "#config/env.config.js";
 
 const { BACKEND_URL } = env;
 

@@ -1,4 +1,4 @@
-import { commonUtils } from "#utils/index.js";
+import { commonUtils } from "#utils/common.utils.js";
 import { otpServices } from "./otp.services.js";
 
 const { routesAsyncHandler } = commonUtils;

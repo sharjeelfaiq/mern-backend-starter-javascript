@@ -1,6 +1,7 @@
 import { Server as SocketIOServer } from "socket.io";
 
-import { logger, env } from "#config/index.js";
+import { logger } from "#config/logger.config.js";
+import { env } from "#config/env.config.js";
 import { httpServer } from "./app.js";
 
 const { FRONTEND_URL } = env;

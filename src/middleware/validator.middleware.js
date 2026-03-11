@@ -1,6 +1,6 @@
 import createError from "http-errors";
 
-import { tokenUtils } from "#utils/index.js";
+import { tokenUtils } from "#utils/token.utils.js";
 
 export const validateMiddleware = {
   accessToken: (req, _res, next) => {

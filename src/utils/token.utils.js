@@ -1,7 +1,7 @@
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
 
-import { env } from "#config/index.js";
+import { env } from "#config/env.config.js";
 
 const { JWT_SECRET_KEY } = env;
 

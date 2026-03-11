@@ -1,4 +1,4 @@
-import { commonUtils } from "#utils/index.js";
+import { commonUtils } from "#utils/common.utils.js";
 import { notificationServices } from "./notification.services.js";
 
 const { routesAsyncHandler } = commonUtils;

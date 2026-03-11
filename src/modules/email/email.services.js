@@ -1,8 +1,9 @@
 import createError from "http-errors";
 
-import { tokenUtils, sendEmail } from "#utils/index.js";
+import { tokenUtils } from "#utils/token.utils.js";
+import { sendEmail } from "#utils/mail.utils.js";
 import { repository } from "#repository/index.js";
-import { env } from "#config/index.js";
+import { env } from "#config/env.config.js";
 
 const { read, update, remove } = repository;
 const { FRONTEND_URL } = env;

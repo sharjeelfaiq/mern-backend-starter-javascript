@@ -1,4 +1,4 @@
-import { OTPModel } from "#models/index.js";
+import { OTPModel } from "#models/otp.model.js";
 
 export const otpRepository = {
   read: {

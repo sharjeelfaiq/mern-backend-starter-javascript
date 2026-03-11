@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
-import { logger, env } from "#config/index.js"; // optional logging
-import { passwordUtils } from "#utils/index.js";
-import { UserModel } from "#models/index.js";
+import { env } from "#config/env.config.js"; // optional logging
+import { logger } from "#config/logger.config.js"; // optional logging
+import { passwordUtils } from "#utils/password.utils.js";
+import { UserModel } from "#models/user.model.js";
 
 const { DATABASE_URI } = env;
 

@@ -1,4 +1,4 @@
-import { BlacklistedTokenModel } from "#models/index.js";
+import { BlacklistedTokenModel } from "#models/blacklisted-token.model.js";
 
 export const blacklistedTokenRepository = {
   write: {

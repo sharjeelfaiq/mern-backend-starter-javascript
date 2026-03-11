@@ -2,7 +2,8 @@ import { readFile } from "fs/promises";
 import createError from "http-errors";
 import { join } from "path";
 
-import { env, transporter } from "#config/index.js";
+import { transporter } from "#config/mail.config.js";
+import { env } from "#config/env.config.js";
 import { VIEWS_DIRECTORY } from "#constants/index.js";
 
 const { USER_EMAIL } = env;

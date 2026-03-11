@@ -1,4 +1,4 @@
-import { NotificationModel } from "#models/index.js";
+import { NotificationModel } from "#models/notification.model.js";
 
 export const notificationRepository = {
   read: {

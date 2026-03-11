@@ -1,6 +1,6 @@
 import multer from "multer";
 
-import { storage } from "#config/index.js";
+import { storage } from "#config/cloudinary.config.js";
 
 const formFields = [{ name: "avatar", maxCount: 1 }];
 

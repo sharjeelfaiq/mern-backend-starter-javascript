@@ -1,5 +1,3 @@
-import { uploadMiddleware } from "./upload.middleware.js";
-import { validateMiddleware } from "./validator.middleware.js";
-import { setupMiddleware } from "./common-middleware/index.js";
-
-export { setupMiddleware, uploadMiddleware, validateMiddleware };
+export { uploadMiddleware } from "./upload.middleware.js";
+export { validateMiddleware } from "./validator.middleware.js";
+export { setupMiddleware } from "./common-middleware/index.js";

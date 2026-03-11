@@ -1,8 +1,10 @@
 import createError from "http-errors";
 
-import { tokenUtils, sendEmail, passwordUtils } from "#utils/index.js";
+import { tokenUtils } from "#utils/token.utils.js";
+import { passwordUtils } from "#utils/password.utils.js";
+import { sendEmail } from "#utils/mail.utils.js";
 import { repository } from "#repository/index.js";
-import { env } from "#config/index.js";
+import { env } from "#config/env.config.js";
 
 const { write, read, update, remove } = repository;
 const { BACKEND_URL } = env;

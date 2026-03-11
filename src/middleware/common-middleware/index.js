@@ -12,7 +12,7 @@ import { corsOptions } from "./cors.js";
 import { errorHandler } from "./error-handler.js";
 import { apiRateLimiter } from "./rate-limiter.js";
 import { invalidRouteHandler } from "./invalid-route-handler.js";
-import { swaggerSpec } from "#config/index.js";
+import { swaggerSpec } from "#config/swagger.config.js";
 
 export const setupMiddleware = (app, appRouter) => {
   app.use(morgan("common")); // Log HTTP requests ✅ Always keep

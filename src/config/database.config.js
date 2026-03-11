@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-import { logger } from "./logger.config.js";
-import { commonUtils } from "#utils/index.js";
 import { env } from "./env.config.js";
+import { logger } from "./logger.config.js";
+import { commonUtils } from "#utils/common.utils.js";
 
 let isConnected = false;
 

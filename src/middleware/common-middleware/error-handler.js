@@ -1,5 +1,5 @@
 import { IS_PROD_ENV } from "#constants/index.js";
-import { logger } from "#config/index.js";
+import { logger } from "#config/logger.config.js";
 
 export const errorHandler = async (error, _request, response, _next) => {
   const status = error.statusCode || error.status || 500;

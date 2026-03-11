@@ -1,6 +1,8 @@
 import appRouter from "#routes/index.js";
 import { setupMiddleware } from "#middleware/index.js";
-import { logger, env, connectDatabase } from "#config/index.js";
+import { env } from "#config/env.config.js";
+import { connectDatabase } from "#config/database.config.js";
+import { logger } from "#config/logger.config.js";
 
 const { PORT, BACKEND_URL } = env;
 
