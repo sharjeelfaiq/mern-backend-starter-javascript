@@ -11,7 +11,7 @@ const formFields = [{ name: "avatar", maxCount: 1 }];
 //     maxCount: 1,
 //   }
 
-export const uploadMiddleware = multer({
+export const uploadFile = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
 }).fields(formFields);
