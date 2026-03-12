@@ -7,8 +7,8 @@ import { authControllers } from "./auth.controllers.js";
 export const authRoutes = express.Router();
 
 authRoutes
-  .post("/signup", validate.dto(authDto.signUpDto), authControllers.signUp)
-  .post("/signin", validate.dto(authDto.signInDto), authControllers.signIn)
+  .post("/signup", validate.dto(authDto.signupDto), authControllers.signUp)
+  .post("/signin", validate.dto(authDto.signinDto), authControllers.signIn)
   .post("/signout", validate.accessToken, authControllers.signOut)
   .post(
     "/request-password-reset",

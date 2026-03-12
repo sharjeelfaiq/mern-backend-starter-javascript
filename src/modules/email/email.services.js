@@ -1,7 +1,7 @@
 import createError from "http-errors";
 
-import { tokenUtils } from "#utils/token.utils.js";
-import { sendEmail } from "#utils/mail.utils.js";
+import { generateToken, verifyToken } from "#lib/token.lib.js";
+import { sendEmail } from "#lib/mail.lib.js";
 import { repository } from "#repository/index.js";
 import { env } from "#config/env.config.js";
 
@@ -19,7 +19,7 @@ export const emailServices = {
       );
     }
 
-    const decodedToken = tokenUtils.verify(verificationToken);
+    const decodedToken = verifyToken(verificationToken);
 
     const { id } = decodedToken;
 
@@ -59,7 +59,7 @@ export const emailServices = {
       throw createError(404, "User not found");
     }
 
-    const verificationToken = tokenUtils.generate(
+    const verificationToken = generateToken(
       { id: user._id },
       "verificationToken",
     );

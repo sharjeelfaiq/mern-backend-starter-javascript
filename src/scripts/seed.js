@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 import { env } from "#config/env.config.js"; // optional logging
 import { logger } from "#config/logger.config.js"; // optional logging
-import { passwordUtils } from "#utils/password.utils.js";
+import { passwordlib } from "#lib/password.lib.js";
 import { UserModel } from "#models/user.model.js";
 
 const { DATABASE_URI } = env;
@@ -31,7 +31,7 @@ const seedUsers = async () => {
       continue;
     }
 
-    const hashedPassword = await passwordUtils.hash(user.password, {
+    const hashedPassword = await passwordlib.hash(user.password, {
       rounds: 12,
     });
 

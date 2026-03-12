@@ -55,6 +55,6 @@
     "#modules/*": "./src/modules/*",
     "#routes/*": "./src/routes/*",
     "#server/*": "./src/server/*",
-    "#utils/*": "./src/utils/*"
+    "#lib/*": "./src/lib/*"
   }
 }

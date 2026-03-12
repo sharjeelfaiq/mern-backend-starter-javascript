@@ -1,7 +1,7 @@
 import { randomInt } from "crypto";
 import bcrypt from "bcryptjs";
 
-export async function generateOTP() {
+export const generateOTP = async () => {
   const rawOTP = randomInt(100000, 999999).toString();
 
   const salt = await bcrypt.genSalt(10);
@@ -10,4 +10,4 @@ export async function generateOTP() {
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
   return { rawOTP, hashedOTP, expiresAt };
-}
+};

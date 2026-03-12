@@ -2,17 +2,15 @@ import mongoose from "mongoose";
 
 import { env } from "./env.config.js";
 import { logger } from "./logger.config.js";
-import { commonUtils } from "#utils/common.utils.js";
+import { promiseHandler } from "#lib/utils.lib.js";
 
 let isConnected = false;
-
-const { asyncHandler } = commonUtils;
 
 const { DATABASE_URI, DATABASE_NAME } = env;
 
 const DB_CONNECTION_STRING = `${DATABASE_URI}/${DATABASE_NAME}`;
 
-export const connectDatabase = asyncHandler(async () => {
+export const connectDatabase = promiseHandler(async () => {
   if (isConnected) {
     logger.warn("Using existing Database connection".warning);
     return;

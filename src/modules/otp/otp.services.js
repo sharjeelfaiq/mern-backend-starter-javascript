@@ -1,8 +1,8 @@
 import createError from "http-errors";
 import bcrypt from "bcryptjs";
 
-import { generateOTP } from "#utils/otp.utils.js";
-import { sendEmail } from "#utils/mail.utils.js";
+import { generateOTP } from "#lib/otp.lib.js";
+import { sendEmail } from "#lib/mail.lib.js";
 import { repository } from "#repository/index.js";
 
 const { write, read } = repository;

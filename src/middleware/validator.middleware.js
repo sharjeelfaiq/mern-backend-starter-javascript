@@ -1,6 +1,6 @@
 import createError from "http-errors";
 
-import { tokenUtils } from "#utils/token.utils.js";
+import { decodeToken } from "#lib/token.lib.js";
 
 export const validateMiddleware = {
   accessToken: (req, _res, next) => {
@@ -12,7 +12,7 @@ export const validateMiddleware = {
 
     const accessToken = authHeader.split(" ")[1]; // Get token after 'Bearer '
 
-    const decodedToken = tokenUtils.decode(accessToken);
+    const decodedToken = decodeToken(accessToken);
 
     req.user = decodedToken;
 

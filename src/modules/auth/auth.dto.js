@@ -5,16 +5,16 @@ import {
   passwordValidation,
   roleValidation,
   tokenValidation,
-} from "#utils/validations.utils.js";
+} from "#lib/validations.lib.js";
 
 export const authDto = {
-  signUpDto: Joi.object({
+  signupDto: Joi.object({
     email: emailValidation.required(),
     password: passwordValidation.required(),
     role: roleValidation.required(),
   }),
 
-  signInDto: Joi.object({
+  signinDto: Joi.object({
     email: emailValidation.required(),
     password: passwordValidation.required(),
   }),
