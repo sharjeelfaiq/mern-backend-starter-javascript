@@ -1,21 +1,12 @@
-import { OTPModel } from "#models/otp.model.js";
+import { OtpModel } from "#models/otp.model.js";
 
 export const otpRepository = {
-  read: {
-    otp: async (id) => {
-      return await OTPModel.find({ id }).sort({ createdAt: -1 }).limit(1);
-    },
-  },
+  createOtp: ({ otpHash, userId, expiresAt }) =>
+    OtpModel.create({
+      otpHash,
+      userId,
+      expiresAt,
+    }),
 
-  write: {
-    otp: async (data) => {
-      const { id, otpHash, expiresAt } = data;
-
-      return await OTPModel.create({
-        id,
-        otpHash,
-        expiresAt,
-      });
-    },
-  },
+  findOtpByUserId: (userId) => OtpModel.find({ userId }),
 };

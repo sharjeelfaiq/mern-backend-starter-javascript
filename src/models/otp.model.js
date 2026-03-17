@@ -2,26 +2,22 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
-const OTPSchema = new Schema({
-  user: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    required: false,
-    immutable: true,
-  },
-
+const OtpSchema = new Schema({
   otpHash: {
     type: String,
-    required: [true, "OTP hash is required"],
-    trim: true,
+    required: true,
   },
-
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "users",
+    index: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
     immutable: true,
   },
-
   expiresAt: {
     type: Date,
     required: true,
@@ -29,11 +25,4 @@ const OTPSchema = new Schema({
   },
 });
 
-OTPSchema.pre("save", function (next) {
-  if (this.expiresAt <= this.createdAt) {
-    return next(new Error("Expiry date must be in the future"));
-  }
-  next();
-});
-
-export const OTPModel = mongoose.model("OTP", OTPSchema);
+export const OtpModel = mongoose.model("otps", OtpSchema);

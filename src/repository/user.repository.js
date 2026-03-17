@@ -1,59 +1,38 @@
-import mongoose from "mongoose";
-import createError from "http-errors";
-
 import { UserModel } from "#models/user.model.js";
 
-const { isValidObjectId } = mongoose;
-
 export const userRepository = {
-  read: {
-    users: () => {
-      return UserModel.find().exec();
-    },
+  createUser: (firstName, lastName, email, password) =>
+    UserModel.create({
+      firstName,
+      lastName,
+      email,
+      password,
+    }),
 
-    userByEmail: (email) => {
-      return UserModel.findOne({ email }).exec();
-    },
+  findAllUsers: () => UserModel.find().select("-password"),
 
-    userById: (id) => {
-      if (!isValidObjectId(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
+  findUserByEmail: (email) => UserModel.findOne({ email }),
 
-      return UserModel.findById(id).exec();
-    },
-  },
+  findUserById: (id) => UserModel.findById(id).select("-password"),
 
-  write: {
-    user: (data) => {
-      const { email, password, role } = data;
+  updateUserById: (id, userData) =>
+    UserModel.findByIdAndUpdate(id, userData, {
+      new: true,
+      upsert: true,
+    }),
 
-      return UserModel.create({ email, password, role });
-    },
-  },
+  updateUserByEmail: (email, userData) =>
+    UserModel.findOneAndUpdate({ email }, userData, {
+      new: true,
+      upsert: true,
+    }),
 
-  update: {
-    userById: (data) => {
-      const { id, userData } = data;
+  updateUserPasswordByEmail: (email, password) =>
+    UserModel.findOneAndUpdate(
+      { email },
+      { password },
+      { new: true, upsert: true },
+    ),
 
-      if (!isValidObjectId(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
-
-      return UserModel.findByIdAndUpdate(id, userData, {
-        new: true,
-        runValidators: true,
-      });
-    },
-  },
-
-  remove: {
-    userById: (id) => {
-      if (!isValidObjectId(id)) {
-        throw createError(400, "Invalid user ID format.");
-      }
-
-      return UserModel.findByIdAndDelete(id).exec();
-    },
-  },
+  deleteUserById: (id) => UserModel.findByIdAndDelete(id),
 };
