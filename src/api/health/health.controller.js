@@ -1,14 +1,14 @@
 import { handlePromise } from "#lib/promise.lib.js";
-import { healthServices } from "./health.services.js";
+import { healthService } from "./health.service.js";
 
-export const healthControllers = {
+export const healthController = {
   checkHealth: handlePromise(async (_request, response) => {
-    const responseBody = await healthServices.checkHealth();
+    const responseBody = await healthService.checkHealth();
     response.status(200).json(responseBody);
   }),
 
   checkDetailedHealth: handlePromise(async (_request, response) => {
-    const responseBody = await healthServices.checkDetailedHealth();
+    const responseBody = await healthService.checkDetailedHealth();
     response.status(200).json(responseBody);
   }),
 };

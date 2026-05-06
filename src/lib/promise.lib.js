@@ -10,7 +10,10 @@ export const handlePromise =
 
       const next = args[2]; // Express next()
 
-      if (typeof next === "function") next(error);
+      if (typeof next === "function") {
+        next(error);
+        return undefined;
+      }
 
       throw error;
     }

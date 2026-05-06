@@ -6,7 +6,7 @@ import { logger } from "#lib/logger.lib.js";
 import { app, httpServer } from "#server/app.js";
 import { handlePromise } from "#lib/promise.lib.js";
 import { connectDatabase } from "#lib/database.lib.js";
-import { applyGlobalMiddleware } from "#middleware/global.middleware.js";
+import { applyGlobalMiddleware } from "#middlewares/global.middleware.js";
 
 const { PORT, BACKEND_URL, NODE_ENV } = env;
 

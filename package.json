@@ -8,7 +8,9 @@
     "dev": "nodemon src/app.js",
     "start": "node src/app.js",
     "format": "prettier --write \"./**/*.{js,jsx,html,yaml,env,md,json,txt}\"",
-    "lint": "eslint \"./**/*.js\""
+    "lint": "eslint \"./**/*.js\"",
+    "format:check": "prettier --check \"./**/*.{js,jsx,html,yaml,env,md,json,txt}\"",
+    "test": "node --test"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.5.0",
@@ -48,7 +50,7 @@
     "#api/*": "./src/api/*",
     "#config/*": "./src/config/*",
     "#lib/*": "./src/lib/*",
-    "#middleware/*": "./src/middleware/*",
+    "#middlewares/*": "./src/middlewares/*",
     "#repository/*": "./src/repository/*",
     "#server/*": "./src/server/*"
   }

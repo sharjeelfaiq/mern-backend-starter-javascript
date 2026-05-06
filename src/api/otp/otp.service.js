@@ -22,10 +22,10 @@ export const otpService = {
 
     if (!isOtpCreated) throw new Error("Failed to create OTP.");
 
-    await sendEmail("reset-email", {
+    await sendEmail("otp-email", {
       email,
       subject: "Password Reset Code",
-      otp: rawOtp,
+      otpCode: rawOtp,
     });
 
     return { success: true, message: "Password reset code sent successfully" };

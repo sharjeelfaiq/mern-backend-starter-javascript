@@ -1,9 +1,12 @@
 import createError from "http-errors";
 import bcrypt from "bcryptjs";
 
+import { env } from "#config/env.config.js";
 import { generateToken, verifyToken } from "#lib/token.lib.js";
 import { sendEmail } from "#lib/email.lib.js";
 import { userRepository } from "../user/user.repository.js";
+
+const { BACKEND_URL, FRONTEND_URL } = env;
 
 export const authService = {
   signup: async ({ firstName, lastName, email, password }) => {
@@ -32,7 +35,7 @@ export const authService = {
       email,
       subject: "Verify Your Email Address",
       verificationToken,
-      BACKEND_URL: process.env.BACKEND_URL,
+      BACKEND_URL,
     });
     if (!isEmailSent) {
       await userRepository.deleteUserById(newUser._id);
@@ -94,7 +97,7 @@ export const authService = {
       email,
       subject: "Password Reset Request",
       resetToken,
-      FRONTEND_URL: process.env.FRONTEND_URL,
+      FRONTEND_URL,
     });
     if (!isEmailSent)
       throw createError(

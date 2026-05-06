@@ -17,12 +17,12 @@ const corsOptions = {
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = async (err, _, res, __) => {
-  const is_development = NODE_ENV === "development";
+  const isDevelopment = NODE_ENV === "development";
 
   const errorResponse = {
     status: err.statusCode || 500,
     message: err.message || "Something went wrong",
-    stack: is_development ? err.stack : "No stack trace available",
+    stack: isDevelopment ? err.stack : "No stack trace available",
   };
 
   logger.error(JSON.stringify(errorResponse, null, 2));

@@ -1,9 +1,9 @@
 import express from "express";
 
-import { notificationControllers } from "./notification.controllers.js";
+import { notificationController } from "./notification.controller.js";
 
 export const notificationRoutes = express.Router();
 
 notificationRoutes
-  .get("/:userId", notificationControllers.getNotificationsByUserId)
-  .patch("/:notiId", notificationControllers.updateNotificationById);
+  .get("/:userId", notificationController.getNotificationsByUserId)
+  .patch("/:notiId", notificationController.updateNotificationById);

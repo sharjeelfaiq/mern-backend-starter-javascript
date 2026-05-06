@@ -21,7 +21,7 @@ export const userController = {
 
   deleteById: handlePromise(async (req, res) => {
     const { id } = req.params;
-    const responseBody = await userService.deleteById(id);
-    res.status(204).json(responseBody);
+    await userService.deleteById(id);
+    res.status(204).send();
   }),
 };

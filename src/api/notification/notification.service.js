@@ -1,7 +1,7 @@
 import { notificationRepository } from "./notification.repository.js";
 import createError from "http-errors";
 
-export const notificationServices = {
+export const notificationService = {
   getNotificationsByUserId: async (requestParams) => {
     const { userId } = requestParams;
 

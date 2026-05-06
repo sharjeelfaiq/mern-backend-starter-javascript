@@ -17,7 +17,7 @@ const {
   CLOUDINARY_API_SECRET,
 } = env;
 
-export const healthServices = {
+export const healthService = {
   checkHealth: async () => {
     let dbStatus = "disconnected";
 

@@ -1,10 +1,10 @@
 import express from "express";
 
-import { healthControllers } from "./health.controllers.js";
-import { verifyAccessToken } from "#middleware/auth.middleware.js";
+import { healthController } from "./health.controller.js";
+import { verifyAccessToken } from "#middlewares/auth.middleware.js";
 
 export const healthRoutes = express.Router();
 
 healthRoutes
-  .get("/", healthControllers.checkHealth)
-  .get("/details", verifyAccessToken, healthControllers.checkDetailedHealth);
+  .get("/", healthController.checkHealth)
+  .get("/details", verifyAccessToken, healthController.checkDetailedHealth);
