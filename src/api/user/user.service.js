@@ -3,7 +3,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
 import { deleteFile } from "#lib/file.lib.js";
-import { userRepository } from "./user.controllers.js";
+import { userRepository } from "./user.repository.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
