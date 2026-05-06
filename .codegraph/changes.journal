@@ -1,4 +1,4 @@
-# codegraph-journal v1 1778050497553
+# codegraph-journal v1 1778051232644
 src/api/user/user.service.js
 src/api/notification/notification.services.js
 src/repository/otp.model.js
@@ -40,3 +40,4 @@ DELETED src/repository/user/user.repository.js
 src/api/user/user.repository.js
 src/api/otp/otp.repository.js
 src/api/notification/notification.repository.js
+src/config/swagger.config.js

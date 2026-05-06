@@ -13,7 +13,7 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "The Smart Towers API v1.0.0",
+      title: "Backend API v1.0.0",
       version: "1.0.0",
       description: "API documentation with Swagger",
     },
