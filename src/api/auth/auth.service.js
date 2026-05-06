@@ -82,24 +82,54 @@ export const authService = {
     };
   },
 
-  resetPassword: async ({ email, newPassword }) => {
+  forgotPassword: async ({ email }) => {
     const existingUser = await userRepository.findUserByEmail(email);
-
     if (!existingUser) throw createError(404, "User not found");
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(newPassword, salt);
+    const resetToken = generateToken(existingUser._id);
+    if (!resetToken)
+      throw createError(500, "Failed to generate password reset token.");
 
-    const isPasswordUpdated = await userRepository.updateUserById(
-      existingUser._id,
-      { password },
-    );
-
-    if (!isPasswordUpdated) throw createError(500, "Password update failed");
+    const isEmailSent = await sendEmail("reset-password", {
+      email,
+      subject: "Password Reset Request",
+      resetToken,
+      FRONTEND_URL: process.env.FRONTEND_URL,
+    });
+    if (!isEmailSent)
+      throw createError(
+        500,
+        "Failed to send the password reset email. Please try again later.",
+      );
 
     return {
       status: true,
-      message: "Password updated successfully.",
+      message: "Password reset link sent to your email.",
+    };
+  },
+
+  resetPassword: async ({ token, password }) => {
+    const decoded = verifyToken(token);
+    if (!decoded)
+      throw createError(400, "The password reset token is invalid or expired.");
+
+    const userId = decoded.id;
+    const existingUser = await userRepository.findUserById(userId);
+    if (!existingUser) throw createError(404, "User not found");
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const isUpdated = await userRepository.updateUserPasswordByEmail(
+      existingUser.email,
+      hashedPassword,
+    );
+    if (!isUpdated)
+      throw createError(500, "Failed to reset the password. Please try again.");
+
+    return {
+      status: true,
+      message: "Password has been reset successfully.",
     };
   },
 };

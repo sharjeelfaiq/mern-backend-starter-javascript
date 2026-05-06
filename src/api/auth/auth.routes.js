@@ -10,4 +10,5 @@ authRoutes
   .post("/signup", validateDto(signupDto), authController.signup)
   .post("/signin", validateDto(signinDto), authController.signin)
   .post("/signout", authController.signOut)
+  .post("/forgot-password", authController.forgotPassword)
   .patch("/reset-password", authController.resetPassword);

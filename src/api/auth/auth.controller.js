@@ -36,8 +36,14 @@ export const authController = {
     res.status(200).json(responseBody);
   }),
 
+  forgotPassword: handlePromise(async (req, res) => {
+    const responseBody = await authService.forgotPassword(req.body);
+    res.status(200).json(responseBody);
+  }),
+
   resetPassword: handlePromise(async (req, res) => {
-    const responseBody = await authService.resetPassword(req.body);
+    const requestBody = req.body;
+    const responseBody = await authService.resetPassword(requestBody);
     res.status(200).json(responseBody);
   }),
 };
