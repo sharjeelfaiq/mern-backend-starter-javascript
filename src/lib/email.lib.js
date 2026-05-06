@@ -26,7 +26,7 @@ const transporter = (() => {
 
   transporter.verify((error) => {
     if (error) {
-      logger.error(`[connection_failed] Mail (error: ${error})`);
+      logger.error(`email -> ${error.message}`);
     }
   });
 

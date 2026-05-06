@@ -15,14 +15,7 @@ export const userController = {
 
   updateById: handlePromise(async (req, res) => {
     const { id } = req.params;
-    const userData = req.body;
-
-    if (req.files && req.files.profilePicture) {
-      const file = req.files.profilePicture[0];
-      userData.profilePicture = `/uploads/${file.filename}`;
-    }
-
-    const responseBody = await userService.updateById(id, userData);
+    const responseBody = await userService.updateById(id, req.body, req.files);
     res.status(200).json(responseBody);
   }),
 

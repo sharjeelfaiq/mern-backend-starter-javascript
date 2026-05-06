@@ -1,4 +1,4 @@
-import { handlePromise } from "#lib/utils.lib.js";
+import { handlePromise } from "#lib/promise.lib.js";
 import { healthServices } from "./health.services.js";
 
 export const healthControllers = {

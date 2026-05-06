@@ -8,6 +8,13 @@ import { userRepository } from "#repository/user.repository.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const getUploadedProfilePicture = (files) => {
+  const avatar = files?.avatar?.[0];
+  if (!avatar) return null;
+
+  return avatar.path ?? avatar.filename ?? null;
+};
+
 export const userService = {
   getAll: async () => {
     const users = await userRepository.findAllUsers();
@@ -27,11 +34,17 @@ export const userService = {
     };
   },
 
-  updateById: async (id, userData) => {
+  updateById: async (id, userData, files) => {
     const existingUser = await userRepository.findUserById(id);
     if (!existingUser) throw createError(404, "User not found");
 
-    if (userData.profilePicture && existingUser.profilePicture) {
+    const profilePicture = getUploadedProfilePicture(files);
+    const updateData = {
+      ...userData,
+      ...(profilePicture ? { profilePicture } : {}),
+    };
+
+    if (updateData.profilePicture && existingUser.profilePicture) {
       const oldProfilePicturePath = path.join(
         __dirname,
         "../../../public",
@@ -40,7 +53,7 @@ export const userService = {
       deleteFile(oldProfilePicturePath);
     }
 
-    const updatedUser = await userRepository.updateUserById(id, userData);
+    const updatedUser = await userRepository.updateUserById(id, updateData);
     if (!updatedUser) throw createError(500, "User update failed");
 
     return {

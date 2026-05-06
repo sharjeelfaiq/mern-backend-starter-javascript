@@ -16,7 +16,7 @@ cloudinary.config({
 
 cloudinary.api.ping((error) => {
   if (error) {
-    logger.error(`[connection_failed] Cloudinary (error: ${error.message})`);
+    logger.error(`cloudinary -> ${error.message}`);
 
     return;
   }

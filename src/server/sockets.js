@@ -14,18 +14,18 @@ const createSocketServer = (httpServer) => {
   });
 
   io.on("connection", (socket) => {
-    logger.info(`[connected] Socket (socket id: ${socket.id})`);
+    logger.info(`socket -> (socket id: ${socket.id})`);
 
     socket.on("connect_error", (error) => {
-      logger.error(`[connection_failed] Socket (error: ${error.message})`);
+      logger.error(`socket -> ${error.message}`);
     });
 
     socket.on("error", (error) => {
-      logger.error(`[runtime_error] Socket (error: ${error.message})`);
+      logger.error(`socket -> ${error.message}`);
     });
 
     socket.on("disconnect", (reason) => {
-      logger.info(`[disconnected] Socket (reason: ${reason})`);
+      logger.info(`socket -> (reason: ${reason})`);
     });
   });
 

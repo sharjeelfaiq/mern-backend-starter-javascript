@@ -13,22 +13,18 @@ export const authController = {
   }),
 
   signin: handlePromise(async (req, res) => {
-    const requestBody = req.body;
-    const responseBody = await authService.signin(requestBody);
-    const { token } = result;
+    const { token, ...responseBody } = await authService.signin(req.body);
 
-    const options = getCookieOptions(payload.isRemembered);
+    const options = getCookieOptions(req.body.isRemembered);
 
     res
       .status(200)
       .cookie(COOKIE_NAME, token, { ...options, maxAge: undefined })
-      .json({ ...responseBody, token: undefined });
+      .json(responseBody);
   }),
 
   signOut: handlePromise(async (req, res) => {
     const token = req.cookies[COOKIE_NAME];
-    if (!token) res.status(400).json({ message: "No token found" });
-
     const responseBody = await authService.signOut(token);
 
     const options = getCookieOptions(false);
@@ -41,8 +37,7 @@ export const authController = {
   }),
 
   resetPassword: handlePromise(async (req, res) => {
-    const requestBody = req.body;
-    const responseBody = await authService.resetPassword(requestBody);
+    const responseBody = await authService.resetPassword(req.body);
     res.status(200).json(responseBody);
   }),
 };

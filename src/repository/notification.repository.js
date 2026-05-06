@@ -18,7 +18,7 @@ export const notificationRepository = {
     return NotificationModel.findByIdAndUpdate(
       notificationId,
       { $set: { read } },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).exec();
   },
 };

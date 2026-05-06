@@ -11,11 +11,14 @@ export const authService = {
     if (existingUser)
       throw createError(400, "A user with this email already exists.");
 
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = await userRepository.createUser(
       firstName,
       lastName,
       email,
-      password,
+      hashedPassword,
     );
     if (!newUser) throw createError(500, "Failed to create a new user.");
 
@@ -46,29 +49,27 @@ export const authService = {
 
     if (!existingUser) throw createError(401, "Invalid email or password.");
 
-    const isValid = await existingUser.comparePassword(password);
+    const isValid = await bcrypt.compare(password, existingUser.password);
 
     if (!isValid) throw createError(401, "Invalid email or password.");
 
-    const token = generateToken(
-      existingUser._id,
-      existingUser.role,
-      isRemembered,
-    );
+    const token = generateToken(existingUser._id, isRemembered);
 
     if (!token) throw createError(500, "Token generation failed");
 
     return {
       message: "Sign-in successful",
+      token,
       data: {
         id: existingUser._id,
         name: `${existingUser.firstName} ${existingUser.lastName}`,
-        token,
       },
     };
   },
 
   signOut: async (token) => {
+    if (!token) throw createError(400, "No token found");
+
     const decoded = verifyToken(token);
 
     if (!decoded)

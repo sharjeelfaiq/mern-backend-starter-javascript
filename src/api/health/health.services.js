@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
+import createError from "http-errors";
 
 import { env } from "#config/env.config.js";
-import { logger } from "#config/logger.config.js";
-import { IS_PROD_ENV } from "#constants/index.js";
+import { logger } from "#lib/logger.lib.js";
 
 const {
   PORT,
@@ -82,7 +82,7 @@ export const healthServices = {
       timestamp: new Date().toISOString(),
       uptime: `${Math.floor(process.uptime())}s`,
       responseTime: `${Date.now() - startTime}ms`,
-      environment: IS_PROD_ENV ? "Production" : "Development",
+      environment: env.NODE_ENV === "production" ? "Production" : "Development",
       memory: {
         usage: `${memoryMB}MB`,
         status: memoryStatus,

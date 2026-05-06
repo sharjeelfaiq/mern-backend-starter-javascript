@@ -29,16 +29,16 @@ const validators = {
   COOKIE_PATH: str(),
   COOKIE_SHORT_EXPIRY: str(),
   COOKIE_LONG_EXPIRY: str(),
-  
+
   EMAIL_HOST: str(),
   EMAIL_SERVICE: str(),
   EMAIL_PORT: port(),
   USER_EMAIL: str(),
   USER_PASSWORD: str(),
-  
+
   CLOUDINARY_CLOUD_NAME: str({ desc: "Cloudinary cloud name" }),
   CLOUDINARY_API_KEY: str({ desc: "Cloudinary API key" }),
-  CLOUDINARY_API_SECRET: str({ desc: "Cloudinary API secret" })
+  CLOUDINARY_API_SECRET: str({ desc: "Cloudinary API secret" }),
 };
 
 export const env = cleanEnv(process.env, validators, {
