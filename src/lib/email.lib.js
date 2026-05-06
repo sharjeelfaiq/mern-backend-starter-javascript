@@ -13,8 +13,12 @@ const __dirname = dirname(__filename);
 const VIEWS_DIRECTORY = path.join(__dirname, "../views");
 const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, USER_EMAIL, USER_PASSWORD } = env;
 
-const transporter = (() => {
-  const transporter = nodemailer.createTransport({
+let transporter;
+
+const getTransporter = () => {
+  if (transporter) return transporter;
+
+  transporter = nodemailer.createTransport({
     host: EMAIL_HOST,
     port: Number(EMAIL_PORT),
     secure: Number(EMAIL_PORT) === 465, // Set true for SSL (465), false for TLS (587)
@@ -24,21 +28,15 @@ const transporter = (() => {
     sendTimeout: 30000,
   });
 
-  transporter.verify((error) => {
-    if (error) {
-      logger.error(`nodemailer -> ${error.message}`);
-    }
-  });
-
   return transporter;
-})();
+};
 
 // Supported email types
 const SUPPORTED_HTML_TEMPLATES = [
+  "otp-email",
+  "reset-password",
   "verification-email",
-  "reset-email",
-  "newsletter-email",
-  "password-email",
+  "verification-success",
 ];
 
 // In-memory template cache
@@ -83,16 +81,21 @@ const processTemplate = (template, variables) => {
     );
   }
   const unmatched = processed.match(/\$\{.+?\}/g);
-  if (unmatched) console.warn("Unmatched template variables:", unmatched);
+  if (unmatched) logger.warn("Unmatched template variables:", unmatched);
   return processed;
 };
 
 // Send email via transporter
 const sendMail = async ({ to, subject, html }) => {
   try {
-    return await transporter.sendMail({ from: USER_EMAIL, to, subject, html });
+    return await getTransporter().sendMail({
+      from: USER_EMAIL,
+      to,
+      subject,
+      html,
+    });
   } catch (error) {
-    if (NODE_ENV !== "production") console.error("[Email Send Error]", error);
+    if (NODE_ENV !== "production") logger.error("[Email Send Error]", error);
     throw createError(500, "Failed to send email.");
   }
 };

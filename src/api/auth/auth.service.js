@@ -32,6 +32,7 @@ export const authService = {
       email,
       subject: "Verify Your Email Address",
       verificationToken,
+      BACKEND_URL: process.env.BACKEND_URL,
     });
     if (!isEmailSent) {
       await userRepository.deleteUserById(newUser._id);
@@ -46,15 +47,16 @@ export const authService = {
 
   signin: async ({ email, password, isRemembered }) => {
     const existingUser = await userRepository.findUserByEmail(email);
-
     if (!existingUser) throw createError(401, "Invalid email or password.");
 
     const isValid = await bcrypt.compare(password, existingUser.password);
-
     if (!isValid) throw createError(401, "Invalid email or password.");
 
-    const token = generateToken(existingUser._id, isRemembered);
+    const isEmailVerified = existingUser.isEmailVerified;
+    if (!isEmailVerified)
+      throw createError(403, "Please verify your email address to sign in.");
 
+    const token = generateToken(existingUser._id, isRemembered);
     if (!token) throw createError(500, "Token generation failed");
 
     return {

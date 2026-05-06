@@ -1,8 +1,8 @@
 import os from "os";
 import process from "process";
 import { router } from "#api/index.js";
-import { logger } from "#lib/logger.lib.js";
 import { env } from "#config/env.config.js";
+import { logger } from "#lib/logger.lib.js";
 import { app, httpServer } from "#server/app.js";
 import { handlePromise } from "#lib/promise.lib.js";
 import { connectDatabase } from "#lib/database.lib.js";

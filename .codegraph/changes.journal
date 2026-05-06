@@ -1,4 +1,4 @@
-# codegraph-journal v1 1778051232644
+# codegraph-journal v1 1778053764995
 src/api/user/user.service.js
 src/api/notification/notification.services.js
 src/repository/otp.model.js
@@ -41,3 +41,12 @@ src/api/user/user.repository.js
 src/api/otp/otp.repository.js
 src/api/notification/notification.repository.js
 src/config/swagger.config.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/auth/auth.service.js
+src/api/email/email.service.js

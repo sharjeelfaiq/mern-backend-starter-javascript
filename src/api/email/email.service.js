@@ -4,16 +4,14 @@ import { verifyToken, generateToken } from "#lib/token.lib.js";
 import { sendEmail } from "#lib/email.lib.js";
 import { userRepository } from "../user/user.repository.js";
 
-const { read, update, remove } = userRepository;
-
 export const emailService = {
   send: async ({ email }) => {
-    const user = await read.userByEmail(email);
+    const user = await userRepository.findUserById(user._id);
     if (!user) throw createError(404, "User not found");
 
     const verificationToken = generateToken(user._id);
     if (!verificationToken) {
-      await remove.userById(user._id);
+      await userRepository.deleteUserById(user._id);
       throw createError(500, "An error occurred while generating the token.");
     }
 
@@ -23,7 +21,7 @@ export const emailService = {
       verificationToken,
     });
     if (!isEmailSent) {
-      await remove.userById(user._id);
+      await userRepository.deleteUserById(user._id);
       throw createError(500, "Failed to send the welcome email.");
     }
 
@@ -34,16 +32,19 @@ export const emailService = {
     const decoded = verifyToken(verificationToken);
     if (!decoded) throw createError(400, "Invalid token");
 
-    const id = decoded.id;
+    const { id } = decoded;
     if (!id) throw createError(400, "Token does not contain the user id");
 
-    const isUserUpdated = await update.userById(id, {
+    const isUserUpdated = await userRepository.updateUserById(id, {
       isEmailVerified: true,
     });
     if (!isUserUpdated)
       throw createError(500, "An error occurred while verifying the email");
 
-    sendEmail("verification-success", {
+    const user = await userRepository.findUserById(id);
+    if (!user) throw createError(404, "User not found");
+
+    await sendEmail("verification-success", {
       email: user.email,
       subject: "Email Verification Successful",
     });
