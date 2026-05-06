@@ -1,4 +1,4 @@
-import { UserModel } from "#models/user.model.js";
+import { UserModel } from "./user.model.js";
 
 export const userRepository = {
   createUser: (firstName, lastName, email, password) =>

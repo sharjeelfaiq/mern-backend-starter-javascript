@@ -1,4 +1,4 @@
-import { OtpModel } from "#models/otp.model.js";
+import { OtpModel } from "./otp.model.js";
 
 export const otpRepository = {
   createOtp: ({ otpHash, userId, expiresAt }) =>

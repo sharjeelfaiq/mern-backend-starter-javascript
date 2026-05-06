@@ -1,4 +1,4 @@
-import { NotificationModel } from "#models/notification.model.js";
+import { NotificationModel } from "./notification.model.js";
 
 export const notificationRepository = {
   getByUserId: (userId) => {

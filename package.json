@@ -45,13 +45,11 @@
     "xss-clean": "^0.1.4"
   },
   "imports": {
-    "#server/*": "./src/server/*",
-    "#config/*": "./src/config/*",
-    "#repository/*": "./src/repository/*",
-    "#dtos/*": "./src/dtos/*",
-    "#middleware/*": "./src/middleware/*",
-    "#models/*": "./src/models/*",
     "#api/*": "./src/api/*",
-    "#lib/*": "./src/lib/*"
+    "#config/*": "./src/config/*",
+    "#lib/*": "./src/lib/*",
+    "#middleware/*": "./src/middleware/*",
+    "#repository/*": "./src/repository/*",
+    "#server/*": "./src/server/*"
   }
 }
