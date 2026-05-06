@@ -1,9 +1,9 @@
 export const applyTestEnv = () => {
   Object.assign(process.env, {
     NODE_ENV: "test",
-    PORT: "5000",
+    PORT: "8000",
     FRONTEND_URL: "http://localhost:3000",
-    BACKEND_URL: "http://localhost:5000",
+    BACKEND_URL: "http://localhost:8000",
     DATABASE_URI: "mongodb://127.0.0.1:27017/mern-backend-starter-test",
     JWT_SECRET_KEY: "test_jwt_secret_key",
     JWT_SHORT_EXPIRY: "15m",

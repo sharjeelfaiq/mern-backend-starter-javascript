@@ -258,7 +258,7 @@ components:
               properties:
                 port:
                   type: integer
-                  example: 5000
+                  example: 8000
                 timestamp:
                   type: string
                   format: date-time

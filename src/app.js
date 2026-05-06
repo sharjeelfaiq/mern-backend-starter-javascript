@@ -40,7 +40,7 @@ handlePromise(async () => {
     res.json({ status: "OK" });
   });
 
-  httpServer.listen(PORT ?? 5000, async () => {
+  httpServer.listen(PORT ?? 8000, async () => {
     const ip = getNetworkIP();
 
     logger.info(`
@@ -50,7 +50,7 @@ handlePromise(async () => {
     - Environments: ${RUNTIME_INFO.envFile}
 
     ➜  Local: ${BACKEND_URL}
-    ➜  Network: ${ip ? `http://${ip}:${PORT ?? 5000}` : "Not available"}
+    ➜  Network: ${ip ? `http://${ip}:${PORT ?? 8000}` : "Not available"}
 `);
   });
 })();

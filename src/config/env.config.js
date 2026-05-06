@@ -10,7 +10,7 @@ const validators = {
     desc: "Environment type",
   }),
 
-  PORT: port({ devDefault: 5000 }),
+  PORT: port({ devDefault: 8000 }),
 
   FRONTEND_URL: url({ desc: "Frontend URL" }),
   BACKEND_URL: url({ desc: "Backend URL" }),
