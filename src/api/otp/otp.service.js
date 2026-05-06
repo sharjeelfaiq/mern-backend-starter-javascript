@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 
 import { generateOtp } from "#lib/otp.lib.js";
 import { sendEmail } from "#lib/email.lib.js";
-import { otpRepository } from "#repository/otp.repository.js";
-import { userRepository } from "#repository/user.repository.js";
+import { otpRepository } from "./otp.repository.js";
+import { userRepository } from "../user/user.repository.js";
 
 export const otpService = {
   send: async ({ email }) => {

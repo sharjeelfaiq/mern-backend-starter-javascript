@@ -1,4 +1,4 @@
-import { notificationRepository } from "#repository/notification.repository.js";
+import { notificationRepository } from "./notification.controllers.js";
 import createError from "http-errors";
 
 export const notificationServices = {

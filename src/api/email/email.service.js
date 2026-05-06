@@ -2,7 +2,7 @@ import createError from "http-errors";
 
 import { verifyToken, generateToken } from "#lib/token.lib.js";
 import { sendEmail } from "#lib/email.lib.js";
-import { userRepository } from "#repository/user.repository.js";
+import { userRepository } from "../user/user.repository.js";
 
 const { read, update, remove } = userRepository;
 
