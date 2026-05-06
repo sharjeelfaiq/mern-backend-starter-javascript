@@ -37,26 +37,3 @@ Repositories should not contain HTTP logic, request/response handling, business 
 Models define persistence shape and database-level constraints only. Keep schemas focused on stored fields, indexes, references, defaults, and database validation.
 
 Models must not import routes, controllers, services, repositories, middleware, or application libraries.
-
-## Enforcement
-
-Run the architecture guard before merging structural changes:
-
-```bash
-npm run lint:architecture
-```
-
-The guard fails when:
-
-- A route file contains an inline Express handler.
-- A route imports services, repositories, models, libraries, or config directly.
-- A controller imports repositories, models, routes, or middleware.
-- A service imports routes, controllers, middleware, or models directly.
-- A repository imports anything outside the model layer.
-- A model imports any internal application layer.
-
-General linting remains separate:
-
-```bash
-npm run lint
-```

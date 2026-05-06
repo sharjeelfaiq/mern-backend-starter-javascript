@@ -26,7 +26,7 @@ const transporter = (() => {
 
   transporter.verify((error) => {
     if (error) {
-      logger.error(`email -> ${error.message}`);
+      logger.error(`nodemailer -> ${error.message}`);
     }
   });
 
