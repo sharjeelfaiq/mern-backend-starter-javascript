@@ -2,10 +2,47 @@
   "info": {
     "_postman_id": "9f7e01f8-ecfd-4591-8e5e-71543f5abf74",
     "name": "Generic Backend API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "45098475"
+    "description": "Runtime-aligned collection for the Express backend API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Check Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/health",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Check Detailed Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/health/details",
+              "host": ["{{BASE_URL}}"],
+              "path": ["health", "details"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
     {
       "name": "Auth",
       "item": [
@@ -13,10 +50,16 @@
           "name": "Signup",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"vepaca9503@0tires.com\",\r\n    \"password\": \"Pa$$w0rd!\",\r\n    \"role\": \"user\"\r\n}",
+              "raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"Pa$$w0rd!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -35,10 +78,16 @@
           "name": "Signin",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"vepaca9503@0tires.com\",\r\n    \"password\": \"Pa$$w0rd!\"\r\n}",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"Pa$$w0rd!\",\n  \"isRemembered\": false\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -56,27 +105,14 @@
         {
           "name": "Signout",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{AUTH_TOKEN}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
               }
-            },
+            ],
             "url": {
               "raw": "{{BASE_URL}}/api/v1/auth/signout",
               "host": ["{{BASE_URL}}"],
@@ -89,10 +125,16 @@
           "name": "Forgot Password",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"mrmalik610@gmail.com\"\r\n}",
+              "raw": "{\n  \"email\": \"jane@example.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -108,13 +150,19 @@
           "response": []
         },
         {
-          "name": "Update Password",
+          "name": "Reset Password",
           "request": {
-            "method": "POST",
-            "header": [],
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"password\": \"12345678\",\r\n    \"resetToken\": \"pfoiawern1a6we8r4faw368ef4awe3f48a386wfe44w368f47awe386f4awe386\"\r\n}",
+              "raw": "{\n  \"token\": \"{{RESET_TOKEN}}\",\n  \"password\": \"N3wPa$$word\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -122,9 +170,9 @@
               }
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/auth/update-password",
+              "raw": "{{BASE_URL}}/api/v1/auth/reset-password",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "auth", "update-password"]
+              "path": ["api", "v1", "auth", "reset-password"]
             }
           },
           "response": []
@@ -135,16 +183,19 @@
       "name": "Email",
       "item": [
         {
-          "name": "Check Verification Token",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
+          "name": "Send Verification Email",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\": \"mrmalik610@gmail.com\"\r\n}",
+              "raw": "{\n  \"email\": \"jane@example.com\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -152,37 +203,28 @@
               }
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/email/check-verification-token?verificationToken=asdasdasdasdasdadasdasdasdasdsa",
+              "raw": "{{BASE_URL}}/api/v1/email/send-verification-email",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "email", "check-verification-token"],
-              "query": [
-                {
-                  "key": "verificationToken",
-                  "value": "asdasdasdasdasdadasdasdasdasdsa"
-                }
-              ]
+              "path": ["api", "v1", "email", "send-verification-email"]
             }
           },
           "response": []
         },
         {
-          "name": "Send Verification Token",
+          "name": "Verify Email",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"email\": \"mrmalik610@gmail.com\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/email/send-verification-token",
+              "raw": "{{BASE_URL}}/api/v1/email/verify-email/{{VERIFICATION_TOKEN}}",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "email", "send-verification-token"]
+              "path": [
+                "api",
+                "v1",
+                "email",
+                "verify-email",
+                "{{VERIFICATION_TOKEN}}"
+              ]
             }
           },
           "response": []
@@ -190,30 +232,60 @@
       ]
     },
     {
-      "name": "Health",
+      "name": "OTP",
       "item": [
         {
-          "name": "Get Public Health Data",
+          "name": "Send OTP",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "{{BASE_URL}}/health/public",
+              "raw": "{{BASE_URL}}/api/v1/otp/send",
               "host": ["{{BASE_URL}}"],
-              "path": ["health", "public"]
+              "path": ["api", "v1", "otp", "send"]
             }
           },
           "response": []
         },
         {
-          "name": "Get Private Health Data",
+          "name": "Verify OTP",
           "request": {
-            "method": "GET",
-            "header": [],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"otp\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
             "url": {
-              "raw": "{{BASE_URL}}/health/private",
+              "raw": "{{BASE_URL}}/api/v1/otp/verify",
               "host": ["{{BASE_URL}}"],
-              "path": ["health", "private"]
+              "path": ["api", "v1", "otp", "verify"]
             }
           },
           "response": []
@@ -226,18 +298,14 @@
         {
           "name": "List Users",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{AUTH_TOKEN}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{BASE_URL}}/api/v1/users",
               "host": ["{{BASE_URL}}"],
@@ -247,80 +315,126 @@
           "response": []
         },
         {
-          "name": "Get a User",
+          "name": "Get User",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{AUTH_TOKEN}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/users/68872978782a7467070c8ec3",
+              "raw": "{{BASE_URL}}/api/v1/users/{{USER_ID}}",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "users", "68872978782a7467070c8ec3"]
+              "path": ["api", "v1", "users", "{{USER_ID}}"]
             }
           },
           "response": []
         },
         {
-          "name": "Update a User",
+          "name": "Update User",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{AUTH_TOKEN}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "PATCH",
-            "header": [],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "formdata",
               "formdata": [
                 {
-                  "key": "email",
-                  "value": "new@email.com",
+                  "key": "firstName",
+                  "value": "Jane",
                   "type": "text"
+                },
+                {
+                  "key": "lastName",
+                  "value": "Doe",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "jane@example.com",
+                  "type": "text"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "src": []
                 }
               ]
             },
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/users/68872978782a7467070c8ec3",
+              "raw": "{{BASE_URL}}/api/v1/users/{{USER_ID}}",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "users", "68872978782a7467070c8ec3"]
+              "path": ["api", "v1", "users", "{{USER_ID}}"]
             }
           },
           "response": []
         },
         {
-          "name": "Delete a User",
+          "name": "Delete User",
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{AUTH_TOKEN}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
             "url": {
-              "raw": "{{BASE_URL}}/api/v1/users/678e46ee66d198e33858c687",
+              "raw": "{{BASE_URL}}/api/v1/users/{{USER_ID}}",
               "host": ["{{BASE_URL}}"],
-              "path": ["api", "v1", "users", "678e46ee66d198e33858c687"]
+              "path": ["api", "v1", "users", "{{USER_ID}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List User Notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/notifications/{{USER_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "notifications", "{{USER_ID}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Notification Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Cookie",
+                "value": "access_token={{ACCESS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/notifications/{{NOTIFICATION_ID}}",
+              "host": ["{{BASE_URL}}"],
+              "path": ["api", "v1", "notifications", "{{NOTIFICATION_ID}}"]
             }
           },
           "response": []
@@ -328,16 +442,6 @@
       ]
     }
   ],
-  "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{AUTH_TOKEN}}",
-        "type": "string"
-      }
-    ]
-  },
   "event": [
     {
       "listen": "prerequest",
@@ -363,19 +467,29 @@
       "type": "string"
     },
     {
-      "key": "DEV_URL",
-      "value": "http://localhost:5000",
+      "key": "ACCESS_TOKEN",
+      "value": "",
       "type": "string"
     },
     {
-      "key": "PROD_URL",
-      "value": "https://romulus-backend-firy.onrender.com",
+      "key": "USER_ID",
+      "value": "68872978782a7467070c8ec3",
       "type": "string"
     },
     {
-      "key": "AUTH_TOKEN",
-      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODRhNDYwYjE1NjY5YzM3ODczZGZiMDYiLCJyb2xlIjoiZWR1Y2F0b3IiLCJpYXQiOjE3NDk5OTc3MzksImV4cCI6MTc1MDAwMTMzOX0.r-haxy1qPb3VJa5_Y6qOLvfYZsn1e5m43zfDpedrrjM",
-      "type": "default"
+      "key": "NOTIFICATION_ID",
+      "value": "68872978782a7467070c8ec4",
+      "type": "string"
+    },
+    {
+      "key": "VERIFICATION_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "RESET_TOKEN",
+      "value": "",
+      "type": "string"
     }
   ]
 }

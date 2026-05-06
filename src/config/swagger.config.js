@@ -27,10 +27,7 @@ const options = {
       },
     ],
   },
-  apis: [
-    path.join(__dirname, "../../docs/swagger/auth.swagger.yaml"),
-    path.join(__dirname, "../../docs/swagger/user.swagger.yaml"),
-  ],
+  apis: [path.join(__dirname, "../../swagger/api.swagger.yaml")],
 };
 
 export const swaggerConfig = swaggerJSDoc(options);
