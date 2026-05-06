@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 import { generateToken, verifyToken } from "#lib/token.lib.js";
 import { sendEmail } from "#lib/email.lib.js";
-import { userRepository } from "#repository/user.repository.js";
+import { userRepository } from "../user/user.repository.js";
 
 export const authService = {
   signup: async ({ firstName, lastName, email, password }) => {
