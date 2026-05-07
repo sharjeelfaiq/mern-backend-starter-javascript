@@ -51,7 +51,6 @@
     "#config/*": "./src/config/*",
     "#lib/*": "./src/lib/*",
     "#middlewares/*": "./src/middlewares/*",
-    "#repository/*": "./src/repository/*",
     "#server/*": "./src/server/*"
   }
 }

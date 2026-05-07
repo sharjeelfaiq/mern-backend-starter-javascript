@@ -82,9 +82,7 @@ Installed but not currently applied in global middleware:
   package.json
 ```
 
-There is no top-level `src/repository/` folder even though `package.json` defines a `#repository/*` import alias. Repositories currently live inside each feature module.
-
-## Architecture
+Architecture
 
 The intended request flow is:
 
@@ -136,7 +134,6 @@ Copy-Item .env.example .env
 ```
 
 3. Edit `.env` with local values.
-
 4. Start MongoDB locally or update `DATABASE_URI` to point to an accessible MongoDB server.
 
 ## Environment Setup
@@ -278,7 +275,6 @@ Security gaps to address before production:
 - `src/server/sockets.js` exports a Socket.IO instance, but nothing imports it during startup.
 - `src/lib/file.lib.js` uses synchronous filesystem operations.
 - `userService.updateById` attempts to delete old profile pictures from a local `public` path even though uploads use Cloudinary and no `public/` folder exists.
-- `#repository/*` import alias points to missing `src/repository/*`.
 - Health service accesses Mongoose directly.
 - Test coverage is present but limited.
 
