@@ -25,6 +25,7 @@ const NotificationSchema = new Schema(
   },
   {
     timestamps: true,
+    collection: "notifications",
   },
 );
 

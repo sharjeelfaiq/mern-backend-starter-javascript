@@ -10,7 +10,7 @@ const OtpSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "users",
+    ref: "User",
     index: true,
   },
   createdAt: {
@@ -23,6 +23,6 @@ const OtpSchema = new Schema({
     required: true,
     index: { expires: 0 }, // TTL index: auto-delete after expiry
   },
-});
+}, { collection: "otps" });
 
-export const OtpModel = mongoose.model("otps", OtpSchema);
+export const OtpModel = mongoose.model("Otp", OtpSchema);
