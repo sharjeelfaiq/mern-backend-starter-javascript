@@ -1,4 +1,4 @@
-# codegraph-journal v1 1778086742719
+# codegraph-journal v1 1778115553968
 src/app.js
 src/config/env.config.js
 src/lib/database.lib.js
@@ -16,3 +16,5 @@ src/app.js
 src/config/env.config.js
 src/lib/database.lib.js
 tests/helpers/env.js
+tests/unit/global.middleware.test.js
+src/middlewares/global.middleware.js

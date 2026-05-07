@@ -43,6 +43,7 @@ const signupDto = Joi.object({
   firstName: firstNameValidation.required(),
   lastName: lastNameValidation.required(),
   email: emailValidation.required(),
+  username: usernameValidation.optional(),
   password: passwordValidation.required(),
 });
 
