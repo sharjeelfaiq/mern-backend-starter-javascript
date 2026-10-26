@@ -36,11 +36,7 @@ export const userRepository = {
     }),
 
   updateUserPasswordByEmail: (email, password) =>
-    UserModel.findOneAndUpdate(
-      { email },
-      { password },
-      { new: true },
-    ),
+    UserModel.findOneAndUpdate({ email }, { password }, { new: true }),
 
   deleteUserById: (id) => UserModel.findByIdAndDelete(id),
 };

@@ -278,7 +278,6 @@ Security gaps to address before production:
 - OTP verification does not consume a successful OTP or check its expiry directly; it can remain reusable until MongoDB's TTL cleanup removes the record.
 - Health service accesses Mongoose directly.
 - No tests are currently tracked, so there is no established test coverage.
-- `npm run format:check` currently fails on `src/api/otp/otp.model.js` and `src/api/user/user.repository.js`.
 
 ## Testing
 
@@ -306,7 +305,7 @@ Fresh-clone check results with Node.js 20.20.2 and npm 11.20.0:
 
 - `npm ci`: exits 0; npm reported 15 dependency vulnerabilities in its audit output.
 - `npm run lint`: exits 0.
-- `npm run format:check`: exits 1 because `src/api/otp/otp.model.js` and `src/api/user/user.repository.js` do not match Prettier formatting.
+- `npm run format:check`: exits 0.
 - `npm test`: exits 0; 0 tests executed.
 
 Current test limitations:
