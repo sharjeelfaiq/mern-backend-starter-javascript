@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "9f7e01f8-ecfd-4591-8e5e-71543f5abf74",
     "name": "Generic Backend API",
-    "description": "Current runtime blocker: xss-clean and express-mongo-sanitize are incompatible with Express 5, so tested HTTP requests return 500. These requests describe intended routes after both issues are fixed. Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The token is not revoked on sign-out. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
+    "description": "Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The cookie is cleared on sign-out, but the JWT is not revoked. Access, verification, and reset tokens have distinct purposes; older sessions and links must be reissued. OTPs expire and are consumed once. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -338,7 +338,7 @@
           "name": "Update User",
           "request": {
             "method": "PATCH",
-            "description": "No target-user ownership check is performed. The current response can include the stored password hash. Avatar uploads are limited to 5 MB and require Cloudinary credentials.",
+            "description": "Only the signed-in owner may update firstName, lastName, username, or avatar. The response excludes the password hash. Avatar uploads are limited to 5 MB and require Cloudinary credentials.",
             "header": [
               {
                 "key": "Cookie",
@@ -408,7 +408,7 @@
           "name": "List User Notifications",
           "request": {
             "method": "GET",
-            "description": "Authenticated route without a check that USER_ID belongs to the caller.",
+            "description": "Requires an access cookie belonging to USER_ID.",
             "header": [
               {
                 "key": "Cookie",
@@ -428,7 +428,7 @@
           "name": "Mark Notification Read",
           "request": {
             "method": "PATCH",
-            "description": "Authenticated route without a notification ownership check.",
+            "description": "Marks the notification read only when it belongs to the signed-in user.",
             "header": [
               {
                 "key": "Cookie",

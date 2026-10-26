@@ -35,12 +35,20 @@ export const userService = {
   },
 
   updateById: async (id, userData, files) => {
+    const editableFields = ["firstName", "lastName", "username"];
+    if (Object.keys(userData).some((key) => !editableFields.includes(key))) {
+      throw createError(400, "Profile contains non-editable fields");
+    }
     const existingUser = await userRepository.findUserById(id);
     if (!existingUser) throw createError(404, "User not found");
 
     const profilePicture = getUploadedProfilePicture(files);
     const updateData = {
-      ...userData,
+      ...Object.fromEntries(
+        editableFields
+          .filter((key) => userData[key] !== undefined)
+          .map((key) => [key, userData[key]]),
+      ),
       ...(profilePicture ? { profilePicture } : {}),
     };
 

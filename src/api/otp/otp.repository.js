@@ -9,4 +9,11 @@ export const otpRepository = {
     }),
 
   findOtpByUserId: (userId) => OtpModel.find({ userId }),
+  consumeOtp: (id, userId) =>
+    OtpModel.findOneAndDelete({
+      _id: id,
+      userId,
+      expiresAt: { $gt: new Date() },
+    }),
+  deleteOtp: (id) => OtpModel.findByIdAndDelete(id),
 };

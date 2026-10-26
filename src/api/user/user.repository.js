@@ -28,7 +28,8 @@ export const userRepository = {
   updateUserById: (id, userData) =>
     UserModel.findByIdAndUpdate(id, userData, {
       new: true,
-    }),
+      runValidators: true,
+    }).select("-password"),
 
   updateUserByEmail: (email, userData) =>
     UserModel.findOneAndUpdate({ email }, userData, {

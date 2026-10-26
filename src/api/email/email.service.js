@@ -12,9 +12,12 @@ export const emailService = {
     const user = await userRepository.findUserByEmail(email);
     if (!user) throw createError(404, "User not found");
 
-    const verificationToken = generateToken(user._id);
+    const verificationToken = generateToken(
+      user._id,
+      false,
+      "email-verification",
+    );
     if (!verificationToken) {
-      await userRepository.deleteUserById(user._id);
       throw createError(500, "An error occurred while generating the token.");
     }
 
@@ -25,7 +28,6 @@ export const emailService = {
       BACKEND_URL,
     });
     if (!isEmailSent) {
-      await userRepository.deleteUserById(user._id);
       throw createError(500, "Failed to send the welcome email.");
     }
 
@@ -33,7 +35,7 @@ export const emailService = {
   },
 
   verify: async ({ verificationToken }) => {
-    const decoded = verifyToken(verificationToken);
+    const decoded = verifyToken(verificationToken, "email-verification");
     if (!decoded) throw createError(400, "Invalid token");
 
     const { id } = decoded;

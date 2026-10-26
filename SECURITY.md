@@ -1,13 +1,9 @@
 # Security Policy
 
-## Support status
+Report suspected vulnerabilities privately through GitHub's **Report a vulnerability** option, if available, or a private maintainer contact. Include the affected commit, reproduction steps, and impact. No response or remediation time is guaranteed.
 
-`package.json` identifies this starter kit as version `1.0.0`. This repository does not publish a supported-version matrix or a security-update schedule.
+## Current controls and limits
 
-This code is a starter kit, not a production-hardened service. Review the [current security limitations](README.md#security-notes) before deployment. In particular, authorization on user and notification resources, password-hash exposure in the user update response, token revocation, and CSRF protection need attention.
+Access, email verification, and password reset JWTs carry distinct purposes. Existing sessions and outstanding verification/reset links from older versions must be reissued. Cookies are HTTP-only with configured expiry and secure in production. Profile writes and notification reads/writes enforce ownership; profile updates accept only editable fields, and user API responses omit password hashes. OTP verification checks expiry and consumes the code atomically.
 
-## Reporting a Vulnerability
-
-Please report suspected vulnerabilities privately to the repository maintainer. If GitHub's **Report a vulnerability** option is available on this repository's Security tab, use it to open a private report. Otherwise, contact the maintainer through a private channel listed on their GitHub profile. Do not include exploit details in a public issue.
-
-Include the affected commit or version, steps to reproduce, impact, and a suggested fix if you have one. No response or remediation time is currently guaranteed.
+This starter still needs a trusted-origin CORS policy, CSRF protection, token revocation or reset-token consumption, dedicated limits on recovery/email endpoints, and a decision on access to the user directory and user details. Sign-out only clears the cookie. The user deletion admin guard is not usable with the access tokens currently issued. Treat these as deployment work before exposing the service publicly.

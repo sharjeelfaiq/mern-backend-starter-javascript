@@ -18,16 +18,17 @@ export const notificationService = {
     };
   },
 
-  updateNotificationById: async (requestParams) => {
+  updateNotificationById: async (requestParams, userId) => {
     const { notiId } = requestParams;
 
     const updatedNotification = await notificationRepository.updateReadStatus({
       notificationId: notiId,
+      userId,
       read: true,
     });
 
     if (!updatedNotification) {
-      throw createError(500, "Notification update failed");
+      throw createError(404, "Notification not found");
     }
 
     return {

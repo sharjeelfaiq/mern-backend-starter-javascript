@@ -6,10 +6,14 @@ import { logger } from "#lib/logger.lib.js";
 
 const { JWT_SECRET_KEY, JWT_SHORT_EXPIRY, JWT_LONG_EXPIRY } = env;
 
-export const generateToken = (userId, isRemembered = false) => {
+export const generateToken = (
+  userId,
+  isRemembered = false,
+  purpose = "access",
+) => {
   try {
     const expiry = isRemembered ? JWT_LONG_EXPIRY : JWT_SHORT_EXPIRY;
-    return jwt.sign({ id: userId }, JWT_SECRET_KEY, {
+    return jwt.sign({ id: userId, purpose }, JWT_SECRET_KEY, {
       expiresIn: expiry,
     });
   } catch (error) {
@@ -18,9 +22,11 @@ export const generateToken = (userId, isRemembered = false) => {
   }
 };
 
-export const verifyToken = (token) => {
+export const verifyToken = (token, purpose = "access") => {
   try {
-    return jwt.verify(token, JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, JWT_SECRET_KEY);
+    if (decoded.purpose !== purpose) throw new Error("Wrong token purpose");
+    return decoded;
   } catch (error) {
     logger.error(`An error occurred while decoding the token: ${error}.`);
     throw createError(401, "An error occurred while decoding the token.");

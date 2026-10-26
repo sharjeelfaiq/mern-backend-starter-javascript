@@ -10,11 +10,13 @@
     "format": "prettier --write \"./**/*.{js,jsx,html,yaml,env,md,json,txt}\"",
     "lint": "eslint \"./**/*.js\"",
     "format:check": "prettier --check \"./**/*.{js,jsx,html,yaml,env,md,json,txt}\"",
-    "test": "node --test"
+    "test": "node scripts/run-tests.mjs",
+    "test:coverage": "node scripts/run-tests.mjs --coverage"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.5.0",
     "eslint": "^9.20.0",
+    "mongodb-memory-server": "^10.4.1",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.0"
   },
@@ -29,7 +31,6 @@
     "dotenv": "^16.4.7",
     "envalid": "^8.1.1",
     "express": "^5.2.1",
-    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.5.2",
     "helmet": "^8.1.0",
     "http-errors": "^2.0.0",
@@ -43,8 +44,7 @@
     "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.17.0",
-    "xss-clean": "^0.1.4"
+    "winston": "^3.17.0"
   },
   "imports": {
     "#api/*": "./src/api/*",

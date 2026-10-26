@@ -17,10 +17,7 @@ export const authController = {
 
     const options = getCookieOptions(req.body.isRemembered);
 
-    res
-      .status(200)
-      .cookie(COOKIE_NAME, token, { ...options, maxAge: undefined })
-      .json(responseBody);
+    res.status(200).cookie(COOKIE_NAME, token, options).json(responseBody);
   }),
 
   signOut: handlePromise(async (req, res) => {

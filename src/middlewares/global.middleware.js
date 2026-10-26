@@ -3,11 +3,10 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import compression from "compression";
-import mongoSanitize from "express-mongo-sanitize";
 import { rateLimit } from "express-rate-limit";
 import swaggerUi from "swagger-ui-express";
 import cookieParser from "cookie-parser";
-import xss from "xss-clean";
+import createError from "http-errors";
 
 import { env } from "#config/env.config.js";
 import { logger } from "#lib/logger.lib.js";
@@ -45,22 +44,47 @@ const invalidPromiseHandler = (req, res) => {
   res.status(404).json({ message: "Endpoint not found" });
 };
 
+// Express 5 exposes req.query as a getter. Validate in place instead of
+// assigning to it (as the legacy sanitizers do).
+const rejectUnsafeKeys = (value) => {
+  if (typeof value === "string" && /<[^>]*>/.test(value)) {
+    throw createError(400, "HTML markup is not allowed in request data");
+  }
+  if (!value || typeof value !== "object") return;
+  for (const [key, child] of Object.entries(value)) {
+    if (
+      key.startsWith("$") ||
+      key.includes(".") ||
+      ["__proto__", "constructor", "prototype"].includes(key)
+    ) {
+      throw createError(400, "Unsafe request field name");
+    }
+    rejectUnsafeKeys(child);
+  }
+};
+
+const validateRequestData = (req, _res, next) => {
+  rejectUnsafeKeys(req.body);
+  rejectUnsafeKeys(req.query);
+  rejectUnsafeKeys(req.params);
+  next();
+};
+
 const applyGlobalMiddleware = (app, router) => {
   app.use(morgan("dev"));
   app.use(cors(corsOptions));
   app.use(cookieParser());
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
   app.use(helmet());
   app.use(compression());
-  app.use(xss());
-  app.use(mongoSanitize());
+  app.use(validateRequestData);
   app.use(
     rateLimit({
       windowMs: 15 * 60 * 1000,
       max: 100,
     }),
   );
-  app.use(express.urlencoded({ extended: true }));
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerConfig));
   app.use(router);
   app.use(invalidPromiseHandler);

@@ -18,6 +18,13 @@ export const verifyAccessToken = (req, _, next) => {
   next();
 };
 
+export const requireOwner = (paramName) => (req, _res, next) => {
+  if (String(req.user?.id) !== String(req.params[paramName])) {
+    throw createError(403, "Access denied.");
+  }
+  next();
+};
+
 export const verifyAuthRole = (authorizedRole) =>
   handlePromise(async (req, _, next) => {
     if (!req.user) throw createError(401, "Authentication required.");

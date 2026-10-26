@@ -440,8 +440,8 @@ paths:
   /api/v1/auth/signin:
     post:
       tags: [Auth]
-      summary: Sign in with email or username and password
-      description: The access cookie is set without a Max-Age attribute, even when isRemembered is true. The JWT expiry still follows the chosen duration.
+      summary: Sign in with email or username and password (15-minute or 7-day cookie)
+      description: Sets an HTTP-only access cookie with Max-Age of 15 minutes, or 7 days when isRemembered is true. The JWT has access purpose and the same configured lifetime.
       requestBody:
         required: true
         content:
@@ -470,7 +470,7 @@ paths:
     post:
       tags: [Auth]
       summary: Sign out and clear the access cookie
-      description: Clears the cookie but does not revoke the JWT. A retained token remains valid until expiry. The current success message incorrectly says the token was invalidated.
+      description: Clears the cookie but does not revoke the JWT. A retained token remains valid until expiry.
       security:
         - cookieAuth: []
       responses:
@@ -508,7 +508,7 @@ paths:
   /api/v1/auth/reset-password:
     patch:
       tags: [Auth]
-      summary: Reset password with a token
+      summary: Reset password with a password-reset purpose token
       requestBody:
         required: true
         content:
@@ -592,8 +592,8 @@ paths:
   /api/v1/otp/verify:
     post:
       tags: [OTP]
-      summary: Verify a password reset OTP
-      description: A successful verification does not consume the OTP or check its expiry directly. It can remain reusable until MongoDB's TTL cleanup removes the record.
+      summary: Verify and consume an unexpired password reset OTP
+      description: Checks expiry at verification time and atomically consumes a matching OTP. A code can succeed only once.
       requestBody:
         required: true
         content:
@@ -648,7 +648,7 @@ paths:
     patch:
       tags: [Users]
       summary: Update a user
-      description: The route does not check that the authenticated user owns the target ID. The current response can include the stored password hash. Avatar uploads are limited to 5 MB and require working Cloudinary credentials.
+      description: Only the signed-in owner may update firstName, lastName, username, or avatar. Protected fields are rejected and the response excludes the password hash. Avatar uploads are limited to 5 MB and require Cloudinary credentials.
       security:
         - cookieAuth: []
       parameters:
@@ -705,8 +705,8 @@ paths:
   /api/v1/notifications/{userId}:
     get:
       tags: [Notifications]
-      summary: List notifications for a user
-      description: Authentication is required, but the route does not check that userId belongs to the caller.
+      summary: List the signed-in user's notifications
+      description: Requires an access cookie belonging to userId.
       security:
         - cookieAuth: []
       parameters:
@@ -726,7 +726,7 @@ paths:
     patch:
       tags: [Notifications]
       summary: Mark a notification as read
-      description: Authentication is required, but the route does not check ownership of the notification.
+      description: Marks the notification read only if it belongs to the signed-in user.
       security:
         - cookieAuth: []
       parameters:

@@ -1,6 +1,7 @@
 import multer from "multer";
 
 import { storage } from "#lib/cloudinary.lib.js";
+import { env } from "#config/env.config.js";
 
 const formFields = [{ name: "avatar", maxCount: 1 }];
 
@@ -12,6 +13,6 @@ const formFields = [{ name: "avatar", maxCount: 1 }];
 //   }
 
 export const uploadFile = multer({
-  storage,
+  storage: env.NODE_ENV === "test" ? multer.memoryStorage() : storage,
   limits: { fileSize: 5 * 1024 * 1024 },
 }).fields(formFields);

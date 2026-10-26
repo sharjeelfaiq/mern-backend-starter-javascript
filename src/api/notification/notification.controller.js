@@ -11,8 +11,10 @@ export const notificationController = {
 
   updateNotificationById: handlePromise(async (request, response) => {
     const requestParams = request.params;
-    const responseBody =
-      await notificationService.updateNotificationById(requestParams);
+    const responseBody = await notificationService.updateNotificationById(
+      requestParams,
+      request.user.id,
+    );
     response.status(200).json(responseBody);
   }),
 };

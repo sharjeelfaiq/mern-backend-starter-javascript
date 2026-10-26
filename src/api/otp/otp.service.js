@@ -22,11 +22,21 @@ export const otpService = {
 
     if (!isOtpCreated) throw new Error("Failed to create OTP.");
 
-    await sendEmail("otp-email", {
-      email,
-      subject: "Password Reset Code",
-      otpCode: rawOtp,
-    });
+    let delivered;
+    try {
+      delivered = await sendEmail("otp-email", {
+        email,
+        subject: "Password Reset Code",
+        otpCode: rawOtp,
+      });
+    } catch (error) {
+      await otpRepository.deleteOtp(isOtpCreated._id);
+      throw error;
+    }
+    if (!delivered) {
+      await otpRepository.deleteOtp(isOtpCreated._id);
+      throw createError(500, "Failed to send OTP email");
+    }
 
     return { success: true, message: "Password reset code sent successfully" };
   },
@@ -41,16 +51,16 @@ export const otpService = {
     if (!existingOtps || !existingOtps.length)
       throw createError(400, "Invalid OTP");
 
-    const comparisonResults = await Promise.all(
-      existingOtps.map((existingOtp) =>
-        bcrypt.compare(receivedOtp, existingOtp.otpHash),
-      ),
-    );
-
-    const isOtpValid = comparisonResults.some((result) => result === true);
-
-    if (!isOtpValid) throw createError(400, "Invalid OTP");
-
-    return { success: true, message: "OTP Verified" };
+    for (const existingOtp of existingOtps) {
+      if (existingOtp.expiresAt <= new Date()) continue;
+      if (await bcrypt.compare(receivedOtp, existingOtp.otpHash)) {
+        const consumed = await otpRepository.consumeOtp(
+          existingOtp._id,
+          existingUser._id,
+        );
+        if (consumed) return { success: true, message: "OTP Verified" };
+      }
+    }
+    throw createError(400, "Invalid OTP");
   },
 };

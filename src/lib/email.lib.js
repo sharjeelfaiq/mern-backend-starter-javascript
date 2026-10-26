@@ -14,6 +14,13 @@ const VIEWS_DIRECTORY = path.join(__dirname, "../views");
 const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, USER_EMAIL, USER_PASSWORD } = env;
 
 let transporter;
+let testSender;
+
+export const setTestEmailSender = (sender) => {
+  if (NODE_ENV !== "test")
+    throw new Error("Email test sender is only available in test mode");
+  testSender = sender;
+};
 
 const getTransporter = () => {
   if (transporter) return transporter;
@@ -102,6 +109,7 @@ const sendMail = async ({ to, subject, html }) => {
 
 // Main function to send email
 export const sendEmail = async (type, options) => {
+  if (testSender) return testSender(type, options);
   if (!SUPPORTED_HTML_TEMPLATES.includes(type)) {
     throw createError(
       400,

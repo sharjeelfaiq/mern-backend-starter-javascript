@@ -26,18 +26,28 @@ export const authService = {
     );
     if (!newUser) throw createError(500, "Failed to create a new user.");
 
-    const verificationToken = generateToken(newUser._id);
+    const verificationToken = generateToken(
+      newUser._id,
+      false,
+      "email-verification",
+    );
     if (!verificationToken) {
       await userRepository.deleteUserById(newUser._id);
       throw createError(500, "An error occurred while generating the token.");
     }
 
-    const isEmailSent = await sendEmail("verification-email", {
-      email,
-      subject: "Verify Your Email Address",
-      verificationToken,
-      BACKEND_URL,
-    });
+    let isEmailSent;
+    try {
+      isEmailSent = await sendEmail("verification-email", {
+        email,
+        subject: "Verify Your Email Address",
+        verificationToken,
+        BACKEND_URL,
+      });
+    } catch (error) {
+      await userRepository.deleteUserById(newUser._id);
+      throw error;
+    }
     if (!isEmailSent) {
       await userRepository.deleteUserById(newUser._id);
       throw createError(500, "Failed to send the welcome email.");
@@ -85,7 +95,7 @@ export const authService = {
       throw createError(401, "The provided token is invalid or expired.");
 
     return {
-      message: "Sign-out successful. The token has been invalidated.",
+      message: "Sign-out successful.",
     };
   },
 
@@ -93,7 +103,7 @@ export const authService = {
     const existingUser = await userRepository.findUserByEmail(email);
     if (!existingUser) throw createError(404, "User not found");
 
-    const resetToken = generateToken(existingUser._id);
+    const resetToken = generateToken(existingUser._id, false, "password-reset");
     if (!resetToken)
       throw createError(500, "Failed to generate password reset token.");
 
@@ -116,7 +126,7 @@ export const authService = {
   },
 
   resetPassword: async ({ token, password }) => {
-    const decoded = verifyToken(token);
+    const decoded = verifyToken(token, "password-reset");
     if (!decoded)
       throw createError(400, "The password reset token is invalid or expired.");
 
