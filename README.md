@@ -8,7 +8,7 @@ This README reflects the current repository state, including known limitations a
 
 ## Features
 
-- Express 4 API server with versioned routes under `/api/v1`.
+- Express 5 API server with versioned routes under `/api/v1`. The current middleware stack prevents requests from succeeding; see [Known Issues](#known-issues).
 - MongoDB connection through Mongoose.
 - Feature modules for auth, email verification, OTP, health, notifications, and users.
 - Layered route -> controller -> service -> repository -> model flow for most modules.
@@ -102,8 +102,8 @@ Known deviations:
 
 ## Prerequisites
 
-- Node.js 20 (the version used for the fresh-clone checks below).
-- npm.
+- Node.js 20.19 or newer within the 20.x line (`@faker-js/faker` 10.5.0 requires at least 20.19; the fresh-clone checks used 20.20.2).
+- npm 10 or newer (`@faker-js/faker` 10.5.0 requires npm 10; the checks used npm 11.20.0).
 - A running MongoDB instance.
 - SMTP credentials for email flows.
 - Cloudinary account credentials for avatar upload flows.
@@ -183,22 +183,16 @@ Start the server without nodemon:
 npm start
 ```
 
-With `.env.example` copied to `.env` and a reachable local MongoDB instance, `npm start` reached the listening state under Node.js 20. Without MongoDB at `DATABASE_URI`, startup cannot reach that state.
+With `.env.example` copied to `.env` and a reachable local MongoDB instance, `npm start` reaches the listening state under Node.js 20. Without MongoDB at `DATABASE_URI`, startup cannot reach that state. **The current Express 5 dependency is incompatible with both `xss-clean` and `express-mongo-sanitize`: every HTTP request tested returned HTTP 500** with `Cannot set property query of #<IncomingMessage> which has only a getter`. Temporarily bypassing `xss-clean` in a disposable clone exposed the same error in `express-mongo-sanitize`. The API is not usable until both middleware incompatibilities are addressed.
 
-Default local URLs with the provided example env:
+Configured local route targets with the provided example env (currently affected by the HTTP 500 blocker):
 
-- Server origin: `http://localhost:8000/` (the `/` path currently returns 404)
+- Server origin: `http://localhost:8000/`
 - API v1 route prefix: `http://localhost:8000/api/v1` (there is no handler at the prefix itself)
 - Swagger UI: `http://localhost:8000/api-docs`
 - Basic health check: `http://localhost:8000/health`
 
-Although `src/app.js` registers a `/` handler, the global 404 middleware is mounted first. A request to `/` currently returns HTTP 404:
-
-```json
-{ "message": "Endpoint not found" }
-```
-
-In the local smoke check, `GET /health` returned HTTP 200 with `{"status":"success","message":"System operational"}`. `GET /health/details` requires an authentication cookie; without one it returned HTTP 401.
+The merged-dependency smoke check returned HTTP 500 for `/`, `/health`, `/health/details`, and `/api-docs/`. In a disposable clone with both incompatible middlewares bypassed, those routes returned 404, 200, 401, and 200 respectively; the basic health response was `{"status":"success","message":"System operational"}`. The `/` handler has a separate ordering issue described below.
 
 ## Scripts
 
@@ -213,7 +207,7 @@ In the local smoke check, `GET /health` returned HTTP 200 with `{"status":"succe
 
 ## API Documentation
 
-Swagger UI is mounted at:
+Swagger UI is configured at the following route, but currently returns HTTP 500 because of the middleware incompatibility:
 
 ```text
 GET /api-docs
@@ -269,6 +263,8 @@ Security gaps to address before production:
 - Notification routes accept arbitrary user and notification IDs without an ownership check.
 - The admin role guard cannot succeed with tokens issued by this application because those tokens contain only a user ID.
 - Upload handling limits files to 5 MB but does not validate file contents or user ownership before storing assets.
+- `xss-clean` and `express-mongo-sanitize` both try to assign to the read-only Express 5 `req.query` property. Together, they make all tested HTTP routes return 500.
+- The `npm ci` audit on October 26, 2026 reported 15 dependency vulnerabilities (2 moderate, 12 high, 1 critical); reassess with `npm audit` before deployment.
 
 ## Known Issues
 
@@ -276,6 +272,7 @@ Security gaps to address before production:
 - `forgotPasswordDto` exists but is not wired to `/forgot-password`.
 - `/reset-password`, email routes, and OTP routes do not currently use DTO validation.
 - `src/server/sockets.js` exports a Socket.IO instance, but nothing imports it during startup.
+- The root `/` handler is registered after the global 404 handler, so it would be unreachable even after the middleware incompatibility is fixed.
 - `src/lib/file.lib.js` uses synchronous filesystem operations.
 - `userService.updateById` attempts to delete old profile pictures from a local `public` path even though uploads use Cloudinary and no `public/` folder exists.
 - OTP verification does not consume a successful OTP or check its expiry directly; it can remain reusable until MongoDB's TTL cleanup removes the record.
@@ -307,7 +304,7 @@ No test files are tracked. On a clean clone with Node.js 20, `npm test` exits 0 
 
 Fresh-clone check results with Node.js 20.20.2 and npm 11.20.0:
 
-- `npm ci`: exits 0.
+- `npm ci`: exits 0; npm reported 15 dependency vulnerabilities in its audit output.
 - `npm run lint`: exits 0.
 - `npm run format:check`: exits 1 because `src/api/otp/otp.model.js` and `src/api/user/user.repository.js` do not match Prettier formatting.
 - `npm test`: exits 0; 0 tests executed.

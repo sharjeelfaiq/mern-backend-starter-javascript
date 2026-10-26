@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "9f7e01f8-ecfd-4591-8e5e-71543f5abf74",
     "name": "Generic Backend API",
-    "description": "Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The token is not revoked on sign-out. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
+    "description": "Current runtime blocker: xss-clean and express-mongo-sanitize are incompatible with Express 5, so tested HTTP requests return 500. These requests describe intended routes after both issues are fixed. Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The token is not revoked on sign-out. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
