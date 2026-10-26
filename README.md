@@ -2,7 +2,7 @@
 
 ## Overview
 
-MERN Backend Starter is a Node.js and Express backend template using ES modules, MongoDB through Mongoose, feature-oriented API modules, centralized runtime configuration, Swagger documentation, email templates, cookie-based JWT authentication, file upload support through Cloudinary storage, and a small Node test suite.
+MERN Backend Starter is a Node.js and Express backend template using ES modules, MongoDB through Mongoose, feature-oriented API modules, centralized runtime configuration, Swagger documentation, email templates, cookie-based JWT authentication, and file upload support through Cloudinary storage. A test command is configured, but no tests are currently tracked.
 
 This README reflects the current repository state, including known limitations and technical debt. It should be treated as the source of truth for local setup, available commands, architecture, and current production-readiness gaps.
 
@@ -13,13 +13,13 @@ This README reflects the current repository state, including known limitations a
 - Feature modules for auth, email verification, OTP, health, notifications, and users.
 - Layered route -> controller -> service -> repository -> model flow for most modules.
 - JWT authentication stored in an HTTP cookie.
-- Role guard middleware for selected protected routes.
+- A role guard on user deletion; tokens created by this application do not contain a role, so this route currently rejects normal signed-in users.
 - Joi request validation on selected auth routes.
 - Email delivery through Nodemailer and HTML templates in `src/views`.
 - Cloudinary-backed `multer` storage for avatar uploads.
 - Swagger UI mounted at `/api-docs`.
 - Postman collection included in `Generic Backend API.postman_collection.json`.
-- ESLint, Prettier, and Node's built-in test runner.
+- ESLint, Prettier, and a configured Node built-in test runner.
 
 Current limitations are documented in [Known Issues](#known-issues).
 
@@ -36,10 +36,10 @@ Current limitations are documented in [Known Issues](#known-issues).
 - Uploads: multer, multer-storage-cloudinary, Cloudinary
 - Logging: Winston and Morgan
 - API docs: swagger-jsdoc and swagger-ui-express
-- Testing: `node:test` and `node:assert`
+- Testing: Node's built-in test runner is configured; no test files are currently tracked
 - Tooling: ESLint 9 and Prettier 3
 
-Installed but not currently applied in global middleware:
+Applied in global middleware:
 
 - `helmet`
 - `compression`
@@ -72,17 +72,13 @@ Installed but not currently applied in global middleware:
     views/                         # HTML email templates
   swagger/
     api.swagger.yaml               # OpenAPI route definitions
-  tests/
-    helpers/
-    integration/
-    unit/
   .env.example
   eslint.config.js
   nodemon.json
   package.json
 ```
 
-Architecture
+## Architecture
 
 The intended request flow is:
 
@@ -102,11 +98,11 @@ Known deviations:
 - `health.service.js` directly checks `mongoose.connection` instead of using a data/provider abstraction.
 - Some routes do not yet use DTO validation.
 - Socket.IO setup exists in `src/server/sockets.js` but is not imported by `src/app.js`, so it is not active at runtime.
-- Some repository update methods use `upsert: true`, which can create records during update flows.
+- The user update response currently returns the Mongoose document without excluding its password hash.
 
 ## Prerequisites
 
-- Node.js 18 or newer; Node.js 20 or newer is recommended.
+- Node.js 20 (the version used for the fresh-clone checks below).
 - npm.
 - A running MongoDB instance.
 - SMTP credentials for email flows.
@@ -115,10 +111,10 @@ Known deviations:
 
 ## Installation
 
-1. Install dependencies:
+1. Install the lockfile dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
 2. Create a local environment file:
@@ -136,6 +132,8 @@ Copy-Item .env.example .env
 3. Edit `.env` with local values.
 4. Start MongoDB locally or update `DATABASE_URI` to point to an accessible MongoDB server.
 
+The server connects to MongoDB before it begins listening. The example file supplies all validated variables, but its SMTP and Cloudinary values are placeholders; email and upload flows need working credentials.
+
 ## Environment Setup
 
 Environment variables are loaded by `dotenv` and validated in `src/config/env.config.js` with `envalid`.
@@ -147,7 +145,7 @@ Environment variables are loaded by `dotenv` and validated in `src/config/env.co
 | `FRONTEND_URL`          | url               | Frontend application URL                                                   | `http://localhost:3000`                          |
 | `BACKEND_URL`           | url               | Backend base URL                                                           | `http://localhost:8000`                          |
 | `DATABASE_URI`          | string            | MongoDB connection string                                                  | `mongodb://127.0.0.1:27017/mern-backend-starter` |
-| `JWT_SECRET_KEY`        | string            | JWT signing secret                                                         | `change_me`                                      |
+| `JWT_SECRET_KEY`        | string            | JWT signing secret                                                         | `dummy_jwt_secret_key_change_me`                 |
 | `JWT_SHORT_EXPIRY`      | string            | Short JWT expiry accepted by `jsonwebtoken`                                | `15m`                                            |
 | `JWT_LONG_EXPIRY`       | string            | Long JWT expiry accepted by `jsonwebtoken`                                 | `7d`                                             |
 | `COOKIE_NAME`           | string            | Auth cookie name                                                           | `access_token`                                   |
@@ -168,7 +166,7 @@ Environment variables are loaded by `dotenv` and validated in `src/config/env.co
 Important notes:
 
 - Application code should import `env` from `#config/env.config.js` instead of reading `process.env` directly.
-- Cookie expiry values are currently validated as strings, although Express `maxAge` expects milliseconds. They should contain numeric millisecond strings until the config layer is tightened.
+- Cookie expiry values are validated as strings, although Express `maxAge` expects milliseconds. Use numeric millisecond strings until the config layer is tightened.
 - In `authController.signin`, `maxAge` is currently removed when setting the cookie, so remember-me duration is not applied.
 
 ## Running Locally
@@ -185,17 +183,22 @@ Start the server without nodemon:
 npm start
 ```
 
+With `.env.example` copied to `.env` and a reachable local MongoDB instance, `npm start` reached the listening state under Node.js 20. Without MongoDB at `DATABASE_URI`, startup cannot reach that state.
+
 Default local URLs with the provided example env:
 
-- API root: `http://localhost:8000/`
-- API v1 base: `http://localhost:8000/api/v1`
+- Server origin: `http://localhost:8000/` (the `/` path currently returns 404)
+- API v1 route prefix: `http://localhost:8000/api/v1` (there is no handler at the prefix itself)
 - Swagger UI: `http://localhost:8000/api-docs`
+- Basic health check: `http://localhost:8000/health`
 
-The root `/` endpoint returns:
+Although `src/app.js` registers a `/` handler, the global 404 middleware is mounted first. A request to `/` currently returns HTTP 404:
 
 ```json
-{ "status": "OK" }
+{ "message": "Endpoint not found" }
 ```
+
+In the local smoke check, `GET /health` returned HTTP 200 with `{"status":"success","message":"System operational"}`. `GET /health/details` requires an authentication cookie; without one it returned HTTP 401.
 
 ## Scripts
 
@@ -206,7 +209,7 @@ The root `/` endpoint returns:
 | `npm run lint`         | `eslint "./**/*.js"`                                           | Run ESLint against JavaScript files.                   |
 | `npm run format`       | `prettier --write "./**/*.{js,jsx,html,yaml,env,md,json,txt}"` | Format supported files.                                |
 | `npm run format:check` | `prettier --check "./**/*.{js,jsx,html,yaml,env,md,json,txt}"` | Check formatting without writing files.                |
-| `npm test`             | `node --test`                                                  | Run the test suite.                                    |
+| `npm test`             | `node --test`                                                  | Discover and run tests; currently discovers none.      |
 
 ## API Documentation
 
@@ -238,7 +241,7 @@ Implemented route groups:
 - `/api/v1/users`
 - `/api/v1/notifications`
 
-Protected route groups use the `verifyAccessToken` middleware where mounted in `src/api/index.js`.
+User and notification routes use `verifyAccessToken` at their mount points. `GET /health/details` also uses it; sign-out checks its cookie in the service. The remaining auth, email, OTP, and basic health routes do not require an access cookie.
 
 ## Security Notes
 
@@ -250,33 +253,35 @@ Current security behavior:
 - Passwords are hashed with bcryptjs.
 - CORS is enabled globally.
 - Request body parsing is enabled globally.
+- Helmet, compression, MongoDB query sanitization, rate limiting, and XSS cleaning are enabled globally.
 - Centralized error middleware returns JSON error responses.
 
 Security gaps to address before production:
 
 - CORS currently uses `origin: true` with credentials, which reflects arbitrary origins. Restrict this to configured allowed frontend origins.
-- Installed middleware packages `helmet`, `compression`, `express-mongo-sanitize`, `express-rate-limit`, and `xss-clean` are not currently applied.
-- Some mutation routes do not have DTO validation.
-- Error responses include a `stack` key in all environments, with a placeholder outside development. Production responses should omit stack details entirely.
+- Only signup and sign-in use Joi DTO validation; other mutation routes lack that validation.
+- Error responses include a stack trace outside production; production responses omit it.
 - Cookie `maxAge` is removed on sign-in, so configured cookie duration is not enforced.
-- Sign-out validates the token but does not maintain a token denylist; JWTs remain valid until expiry unless the client removes the cookie.
+- Sign-out clears the browser cookie but does not revoke the JWT; a retained token remains valid until its expiry.
+- The sign-out response currently says the token was invalidated, although only the cookie is cleared.
 - CSRF protection is not implemented.
-- Upload handling should validate file type and ownership before storing assets.
+- User update does not check that the target ID matches the authenticated user, and its response can expose the user's password hash.
+- Notification routes accept arbitrary user and notification IDs without an ownership check.
+- The admin role guard cannot succeed with tokens issued by this application because those tokens contain only a user ID.
+- Upload handling limits files to 5 MB but does not validate file contents or user ownership before storing assets.
 
 ## Known Issues
 
-- `signinDto` allows `username`, but `authService.signin` only looks up users by `email`.
-- The user model does not define a `username` field.
+- Signup accepts an optional `username`; sign-in accepts either an email or a username. Username uniqueness is enforced by a sparse database index, but signup checks only for duplicate email before insertion.
 - `forgotPasswordDto` exists but is not wired to `/forgot-password`.
 - `/reset-password`, email routes, and OTP routes do not currently use DTO validation.
-- `userRepository.updateUserById`, `updateUserByEmail`, and `updateUserPasswordByEmail` use `upsert: true`.
-- User model is registered as `model("users", UserSchema)`, while notification references use `ref: "User"`.
-- Model naming is inconsistent across `users`, `otps`, and `Notification`.
 - `src/server/sockets.js` exports a Socket.IO instance, but nothing imports it during startup.
 - `src/lib/file.lib.js` uses synchronous filesystem operations.
 - `userService.updateById` attempts to delete old profile pictures from a local `public` path even though uploads use Cloudinary and no `public/` folder exists.
+- OTP verification does not consume a successful OTP or check its expiry directly; it can remain reusable until MongoDB's TTL cleanup removes the record.
 - Health service accesses Mongoose directly.
-- Test coverage is present but limited.
+- No tests are currently tracked, so there is no established test coverage.
+- `npm run format:check` currently fails on `src/api/otp/otp.model.js` and `src/api/user/user.repository.js`.
 
 ## Testing
 
@@ -298,16 +303,18 @@ Run formatting check:
 npm run format:check
 ```
 
-Current test files:
+No test files are tracked. On a clean clone with Node.js 20, `npm test` exits 0 but reports **0 tests**, so the successful exit does not establish test coverage.
 
-- `tests/unit/promise.lib.test.js`
-- `tests/unit/email.service.test.js`
-- `tests/integration/auth.routes.test.js`
-- `tests/integration/user.controller.test.js`
+Fresh-clone check results with Node.js 20.20.2 and npm 11.20.0:
+
+- `npm ci`: exits 0.
+- `npm run lint`: exits 0.
+- `npm run format:check`: exits 1 because `src/api/otp/otp.model.js` and `src/api/user/user.repository.js` do not match Prettier formatting.
+- `npm test`: exits 0; 0 tests executed.
 
 Current test limitations:
 
-- Tests use Node's built-in test runner and manual mocks.
+- The configured test command uses Node's built-in test runner, but there are no test files or mocks in the repository.
 - There is no full database integration test harness.
 - There is no authentication flow test that signs up, verifies, signs in, and accesses protected routes end to end.
 - There is no upload test coverage.
@@ -324,7 +331,7 @@ Before deploying:
 - Use production MongoDB, SMTP, Cloudinary, frontend, and backend values.
 - Replace dummy secrets from `.env.example`.
 - Restrict CORS origins.
-- Apply production security middleware.
+- Review the existing security middleware and address the authorization and data exposure gaps above.
 - Confirm cookie settings for HTTPS, same-site policy, domain, and lifetime.
 - Confirm Swagger exposure is acceptable for the target environment.
 - Add process management or platform configuration for the selected host.

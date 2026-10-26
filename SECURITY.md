@@ -1,21 +1,13 @@
 # Security Policy
 
-## Supported Versions
+## Support status
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+`package.json` identifies this starter kit as version `1.0.0`. This repository does not publish a supported-version matrix or a security-update schedule.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+This code is a starter kit, not a production-hardened service. Review the [current security limitations](README.md#security-notes) before deployment. In particular, authorization on user and notification resources, password-hash exposure in the user update response, token revocation, and CSRF protection need attention.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please report suspected vulnerabilities privately to the repository maintainer. If GitHub's **Report a vulnerability** option is available on this repository's Security tab, use it to open a private report. Otherwise, contact the maintainer through a private channel listed on their GitHub profile. Do not include exploit details in a public issue.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Include the affected commit or version, steps to reproduce, impact, and a suggested fix if you have one. No response or remediation time is currently guaranteed.

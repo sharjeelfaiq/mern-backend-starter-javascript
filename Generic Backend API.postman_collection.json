@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "9f7e01f8-ecfd-4591-8e5e-71543f5abf74",
     "name": "Generic Backend API",
-    "description": "Runtime-aligned collection for the Express backend API.",
+    "description": "Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The token is not revoked on sign-out. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -106,6 +106,7 @@
           "name": "Signout",
           "request": {
             "method": "POST",
+            "description": "Clears the cookie but does not revoke a retained JWT.",
             "header": [
               {
                 "key": "Cookie",
@@ -337,6 +338,7 @@
           "name": "Update User",
           "request": {
             "method": "PATCH",
+            "description": "No target-user ownership check is performed. The current response can include the stored password hash. Avatar uploads are limited to 5 MB and require Cloudinary credentials.",
             "header": [
               {
                 "key": "Cookie",
@@ -381,6 +383,7 @@
           "name": "Delete User",
           "request": {
             "method": "DELETE",
+            "description": "Requires an admin role, but tokens issued by this application have no role; normal signed-in users receive 403.",
             "header": [
               {
                 "key": "Cookie",
@@ -405,6 +408,7 @@
           "name": "List User Notifications",
           "request": {
             "method": "GET",
+            "description": "Authenticated route without a check that USER_ID belongs to the caller.",
             "header": [
               {
                 "key": "Cookie",
@@ -424,6 +428,7 @@
           "name": "Mark Notification Read",
           "request": {
             "method": "PATCH",
+            "description": "Authenticated route without a notification ownership check.",
             "header": [
               {
                 "key": "Cookie",

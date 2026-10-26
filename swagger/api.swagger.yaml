@@ -11,6 +11,7 @@ components:
       type: apiKey
       in: cookie
       name: access_token
+      description: Default name from .env.example; change this specification if COOKIE_NAME is configured differently.
   schemas:
     ObjectId:
       type: string
@@ -34,7 +35,7 @@ components:
           example: "Invalid request parameters"
         stack:
           type: string
-          example: "No stack trace available"
+          description: Present outside production only.
     MessageResponse:
       type: object
       required:
@@ -72,6 +73,9 @@ components:
           example: "Doe"
         email:
           $ref: "#/components/schemas/Email"
+        username:
+          type: string
+          description: Optional username used as an alternative sign-in identifier.
         isEmailVerified:
           type: boolean
           example: false
@@ -123,6 +127,9 @@ components:
           example: "Doe"
         email:
           $ref: "#/components/schemas/Email"
+        username:
+          type: string
+          description: Optional; stored with a sparse unique index.
         password:
           type: string
           format: password
@@ -131,11 +138,15 @@ components:
     SigninRequest:
       type: object
       required:
-        - email
         - password
+      oneOf:
+        - required: [email]
+        - required: [username]
       properties:
         email:
           $ref: "#/components/schemas/Email"
+        username:
+          type: string
         password:
           type: string
           format: password
@@ -408,6 +419,7 @@ paths:
     post:
       tags: [Auth]
       summary: Register a new user
+      description: Sends a verification email before returning success; working SMTP credentials are required.
       requestBody:
         required: true
         content:
@@ -428,7 +440,8 @@ paths:
   /api/v1/auth/signin:
     post:
       tags: [Auth]
-      summary: Sign in with email and password
+      summary: Sign in with email or username and password
+      description: The access cookie is set without a Max-Age attribute, even when isRemembered is true. The JWT expiry still follows the chosen duration.
       requestBody:
         required: true
         content:
@@ -457,6 +470,7 @@ paths:
     post:
       tags: [Auth]
       summary: Sign out and clear the access cookie
+      description: Clears the cookie but does not revoke the JWT. A retained token remains valid until expiry. The current success message incorrectly says the token was invalidated.
       security:
         - cookieAuth: []
       responses:
@@ -579,6 +593,7 @@ paths:
     post:
       tags: [OTP]
       summary: Verify a password reset OTP
+      description: A successful verification does not consume the OTP or check its expiry directly. It can remain reusable until MongoDB's TTL cleanup removes the record.
       requestBody:
         required: true
         content:
@@ -633,6 +648,7 @@ paths:
     patch:
       tags: [Users]
       summary: Update a user
+      description: The route does not check that the authenticated user owns the target ID. The current response can include the stored password hash. Avatar uploads are limited to 5 MB and require working Cloudinary credentials.
       security:
         - cookieAuth: []
       parameters:
@@ -672,6 +688,7 @@ paths:
     delete:
       tags: [Users]
       summary: Delete a user
+      description: Requires an admin role, but tokens issued by this application contain only a user ID, so normal signed-in users receive 403.
       security:
         - cookieAuth: []
       parameters:
@@ -689,6 +706,7 @@ paths:
     get:
       tags: [Notifications]
       summary: List notifications for a user
+      description: Authentication is required, but the route does not check that userId belongs to the caller.
       security:
         - cookieAuth: []
       parameters:
@@ -708,6 +726,7 @@ paths:
     patch:
       tags: [Notifications]
       summary: Mark a notification as read
+      description: Authentication is required, but the route does not check ownership of the notification.
       security:
         - cookieAuth: []
       parameters:
