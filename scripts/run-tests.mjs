@@ -1,12 +1,14 @@
 import { spawnSync } from "node:child_process";
+import { readdirSync } from "node:fs";
 
-const args = [
-  ...(process.argv.includes("--coverage") ? ["--experimental-test-coverage"] : []),
-  "--test",
-  "--test-reporter=tap",
-  "test/integration.test.js",
-];
-const result = spawnSync(process.execPath, args, { encoding: "utf8", env: process.env });
+const files = readdirSync("test")
+  .filter((name) => name.endsWith(".test.js"))
+  .map((name) => `test/${name}`);
+const result = spawnSync(
+  process.execPath,
+  ["--test", "--test-reporter=tap", ...files],
+  { encoding: "utf8", env: process.env },
+);
 process.stdout.write(result.stdout ?? "");
 process.stderr.write(result.stderr ?? "");
 const passed = Number(result.stdout?.match(/^# pass (\d+)$/m)?.[1] ?? 0);
