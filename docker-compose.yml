@@ -1,0 +1,40 @@
+# Local development stack: API + MongoDB + MailDev (fake SMTP, inbox at http://localhost:1080).
+# No external accounts needed. Cloudinary values are placeholders, so avatar uploads will not work.
+services:
+  api:
+    build: .
+    env_file: .env.example
+    environment:
+      NODE_ENV: development
+      DATABASE_URI: mongodb://mongo:27017/mern-backend-starter
+      EMAIL_HOST: maildev
+      EMAIL_PORT: "1025"
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      maildev:
+        condition: service_started
+    restart: on-failure
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  maildev:
+    image: maildev/maildev:2.1.0
+    environment:
+      MAILDEV_INCOMING_USER: dummy@example.com
+      MAILDEV_INCOMING_PASS: dummy_email_password
+    ports:
+      - "1080:1080"
+
+volumes:
+  mongo-data:

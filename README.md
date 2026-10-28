@@ -13,16 +13,25 @@ npm start
 
 The server connects to MongoDB before listening. API routes are under `/api/v1`; health is at `/health` and Swagger UI at `/api-docs/`.
 
+### Docker (no external accounts)
+
+```bash
+docker compose up --build
+curl http://localhost:8000/health
+```
+
+This starts the API, MongoDB, and [MailDev](https://github.com/maildev/maildev), a fake SMTP server. Verification and password reset emails appear in the MailDev inbox at http://localhost:1080. Settings come from `.env.example`; Cloudinary values are placeholders, so avatar uploads need real credentials.
+
 ## Checks
 
 ```bash
 npm run lint
 npm run format:check
 npm test
-npm run test:coverage
+npm run test:coverage   # runs the tests under c8 and fails below 70% line coverage (.c8rc.json)
 ```
 
-Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. CI runs installation, lint, format check, tests, and coverage on Node 20.
+Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. Unit tests (`test/*.service.test.js`, `test/email.lib.test.js`) mock the repositories and need no database; `test/integration.test.js` exercises the HTTP API. CI runs installation, `npm audit --audit-level=high`, lint, format check, and the tests with the coverage gate on Node 20.
 
 ## Authentication and profile behavior
 
