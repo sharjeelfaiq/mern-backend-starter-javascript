@@ -13,6 +13,16 @@ npm start
 
 The server connects to MongoDB before listening. API routes are under `/api/v1`; health is at `/health` and Swagger UI at `/api-docs/`.
 
+### Operator metrics
+
+Set `METRICS_TOKEN` in `.env` to a strong random value to enable `GET /metrics` when running the API directly. Docker Compose loads `.env.example` for the API service and leaves metrics disabled unless its environment is overridden. The endpoint returns in-process request counts and total durations grouped by HTTP method, route template, and status, plus 4xx and 5xx totals. It requires an `Authorization: Bearer <METRICS_TOKEN>` header; without a configured token it returns 404, and without the correct token it returns 401. For example:
+
+```bash
+curl -H "Authorization: Bearer $METRICS_TOKEN" http://localhost:8000/metrics
+```
+
+Keep the token private and use HTTPS or a trusted private network. Counters reset when the process restarts and are per process; combine them externally if running multiple instances. The response contains no raw URLs, request bodies, or tokens.
+
 ### Docker (no external accounts)
 
 ```bash
@@ -31,11 +41,13 @@ npm test
 npm run test:coverage   # runs the tests under c8 and fails below 70% line coverage (.c8rc.json)
 ```
 
-Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. Unit tests (`test/*.service.test.js`, `test/email.lib.test.js`) mock the repositories and need no database; `test/integration.test.js` exercises the HTTP API. CI runs installation, `npm audit --audit-level=high`, lint, format check, and the tests with the coverage gate on Node 20.
+Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. If the download is unavailable, set `MONGOMS_SYSTEM_BINARY` to the path of a compatible local `mongod` executable before running tests. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. Unit tests (`test/*.service.test.js`, `test/email.lib.test.js`) mock the repositories and need no database; `test/integration.test.js` exercises the HTTP API. CI runs installation, `npm audit --audit-level=high`, lint, format check, and the tests with the coverage gate on Node 20.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and [CHANGELOG.md](CHANGELOG.md) for changes in this checkout.
 
 ## Authentication and profile behavior
 
-Sign-in sets an HTTP-only `access_token` cookie for 15 minutes, or 7 days when `isRemembered` is true, using the durations configured in `.env`. Access, verification, and password reset JWTs have separate purposes. **Existing sessions and outstanding verification or reset links issued before this change must be reissued.**
+With the default settings in `.env.example`, sign-in sets an HTTP-only `access_token` cookie for 15 minutes, or 7 days when `isRemembered` is true. Access, verification, and password reset JWTs have separate purposes. Tokens issued without the current purpose claim are rejected and must be reissued.
 
 `PATCH /api/v1/users/{id}` requires the signed-in user to own the ID. It accepts `firstName`, `lastName`, `username`, and an uploaded `avatar`. Protected fields such as `password`, `email`, and `isEmailVerified` are rejected. User list, detail, and update responses exclude password hashes. Notification listing requires ownership of `{userId}`; marking a notification read only succeeds for its owner.
 
@@ -43,8 +55,8 @@ OTP verification checks expiry immediately and atomically consumes a matching OT
 
 ## Security notes
 
-Global middleware rejects MongoDB operator, dotted, and prototype field names and HTML markup in request body, query, and parameters without assigning to Express 5's read-only `req.query`. Clients must still encode output when rendering text.
+Global middleware rejects MongoDB operator, dotted, and prototype field names and HTML markup in request bodies and query strings without assigning to Express 5's read-only `req.query`. It runs before route matching, so route parameters are not covered by this global check. Clients must still encode output when rendering text.
 
-Before production, restrict credentialed CORS to trusted origins, add CSRF protection, and decide whether user directory and detail reads should be limited further. Sign-out clears the cookie but does not revoke a copied JWT. Password reset tokens remain valid until expiry and are not single use. The role guard on user deletion expects an admin role, but issued access tokens have no role. OTP and email endpoints need dedicated abuse limits. The `/health/details` response exposes configuration status to any valid account. Review these gaps in [SECURITY.md](SECURITY.md).
+Requests reaching the global rate limiter share a 100-request-per-15-minute IP limit; excess requests return 429. Before production, restrict credentialed CORS to trusted origins, add CSRF protection, and decide whether user directory and detail reads should be limited further. Sign-out clears the cookie but does not revoke a copied JWT. Password reset tokens remain valid until expiry and are not single use. The role guard on user deletion expects an admin role, but issued access tokens have no role. OTP and email endpoints need dedicated abuse limits. The `/health/details` response exposes configuration status to any valid account. Review these gaps in [SECURITY.md](SECURITY.md).
 
 The API reference is in [swagger/api.swagger.yaml](swagger/api.swagger.yaml) and the [Postman collection](Generic%20Backend%20API.postman_collection.json).

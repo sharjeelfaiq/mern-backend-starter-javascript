@@ -21,4 +21,5 @@ Object.assign(process.env, {
   CLOUDINARY_CLOUD_NAME: "test",
   CLOUDINARY_API_KEY: "test",
   CLOUDINARY_API_SECRET: "test",
+  METRICS_TOKEN: "unit-metrics-secret",
 });

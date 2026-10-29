@@ -16,7 +16,7 @@ const options = {
       title: "Backend API v1.0.0",
       version: "1.0.0",
       description:
-        "Current runtime blocker: xss-clean and express-mongo-sanitize are incompatible with Express 5, so tested HTTP routes return 500. The operations below describe intended behavior after both issues are fixed.",
+        "Express 5 and MongoDB starter API. Authentication uses an HTTP-only access cookie; operator metrics require a separate bearer token.",
     },
     servers: [
       {

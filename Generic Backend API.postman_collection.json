@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "9f7e01f8-ecfd-4591-8e5e-71543f5abf74",
     "name": "Generic Backend API",
-    "description": "Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need real SMTP credentials; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The cookie is cleared on sign-out, but the JWT is not revoked. Access, verification, and reset tokens have distinct purposes; older sessions and links must be reissued. OTPs expire and are consumed once. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. See README.md and SECURITY.md for current limitations.",
+    "description": "Set BASE_URL and use a running MongoDB instance. Signup, email, OTP, and password-reset mail need working SMTP settings; avatar upload needs Cloudinary credentials. Sign in with email or username, then set ACCESS_TOKEN from the access_token cookie for protected requests. The cookie is cleared on sign-out, but the JWT is not revoked. Access, verification, and reset tokens have distinct purposes; tokens without the current purpose claim must be reissued. OTPs expire and are consumed once. USER_ID and NOTIFICATION_ID are placeholders, not seeded records. For operator metrics, configure METRICS_TOKEN on the server and set the matching collection variable. See README.md and SECURITY.md for current limitations.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -37,6 +37,31 @@
               "raw": "{{BASE_URL}}/health/details",
               "host": ["{{BASE_URL}}"],
               "path": ["health", "details"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Metrics",
+      "item": [
+        {
+          "name": "Get Operator Metrics",
+          "request": {
+            "method": "GET",
+            "description": "Requires METRICS_TOKEN on the server and a matching bearer token. Returns 404 when disabled and 401 when the token is missing or wrong. Counts are per process and reset on restart.",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{METRICS_TOKEN}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/metrics",
+              "host": ["{{BASE_URL}}"],
+              "path": ["metrics"]
             }
           },
           "response": []
@@ -360,8 +385,8 @@
                   "type": "text"
                 },
                 {
-                  "key": "email",
-                  "value": "jane@example.com",
+                  "key": "username",
+                  "value": "jane",
                   "type": "text"
                 },
                 {
@@ -473,6 +498,11 @@
     },
     {
       "key": "ACCESS_TOKEN",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "METRICS_TOKEN",
       "value": "",
       "type": "string"
     },

@@ -10,6 +10,7 @@ import createError from "http-errors";
 
 import { env } from "#config/env.config.js";
 import { logger } from "#lib/logger.lib.js";
+import { getMetrics, requestMetrics } from "#lib/metrics.lib.js";
 import { swaggerConfig } from "#config/swagger.config.js";
 
 const { NODE_ENV } = env;
@@ -71,6 +72,7 @@ const validateRequestData = (req, _res, next) => {
 };
 
 const applyGlobalMiddleware = (app, router) => {
+  app.use(requestMetrics);
   app.use(morgan("dev"));
   app.use(cors(corsOptions));
   app.use(cookieParser());
@@ -85,6 +87,7 @@ const applyGlobalMiddleware = (app, router) => {
       max: 100,
     }),
   );
+  app.get("/metrics", getMetrics);
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerConfig));
   app.use(router);
   app.use(invalidPromiseHandler);

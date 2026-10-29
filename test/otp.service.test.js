@@ -116,3 +116,37 @@ test("verify rejects an unknown email", async () => {
     status: 400,
   });
 });
+
+test("verify skips expired and incorrect codes before consuming a valid one", async () => {
+  mock.method(userRepository, "findUserByEmail", async () => user);
+  const hash = await bcrypt.hash("123456", 4);
+  mock.method(otpRepository, "findOtpByUserId", async () => [
+    { _id: "expired", otpHash: hash, expiresAt: new Date(Date.now() - 1000) },
+    {
+      _id: "wrong",
+      otpHash: await bcrypt.hash("000000", 4),
+      expiresAt: new Date(Date.now() + 60000),
+    },
+    { _id: "valid", otpHash: hash, expiresAt: new Date(Date.now() + 60000) },
+  ]);
+  const consume = mock.method(otpRepository, "consumeOtp", async () => ({
+    _id: "valid",
+  }));
+  assert.equal(
+    (await otpService.verify({ email: user.email, otp: "123456" })).success,
+    true,
+  );
+  assert.deepEqual(consume.mock.calls[0].arguments, ["valid", user._id]);
+  assert.equal(consume.mock.callCount(), 1);
+});
+
+test("verify propagates repository errors", async () => {
+  mock.method(userRepository, "findUserByEmail", async () => user);
+  mock.method(otpRepository, "findOtpByUserId", async () => {
+    throw new Error("database unavailable");
+  });
+  await assert.rejects(
+    otpService.verify({ email: user.email, otp: "123456" }),
+    /database unavailable/,
+  );
+});

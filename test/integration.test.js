@@ -38,6 +38,7 @@ before(async () => {
     CLOUDINARY_CLOUD_NAME: "test",
     CLOUDINARY_API_KEY: "test",
     CLOUDINARY_API_SECRET: "test",
+    METRICS_TOKEN: "integration-metrics-secret",
   });
   const [
     { app, httpServer },
@@ -80,12 +81,16 @@ after(async () => {
   if (mongo) await mongo.stop();
 });
 
-const request = async (path, { method = "GET", body, cookie } = {}) => {
+const request = async (
+  path,
+  { method = "GET", body, cookie, authorization } = {},
+) => {
   const response = await fetch(`${base}${path}`, {
     method,
     headers: {
       ...(body ? { "content-type": "application/json" } : {}),
       ...(cookie ? { cookie } : {}),
+      ...(authorization ? { authorization } : {}),
     },
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -127,6 +132,31 @@ test("HTTP smoke, global validation, and access cookies", async (t) => {
       400,
     );
   });
+  await t.test(
+    "metrics require the operator token and use route templates",
+    async () => {
+      assert.equal((await request("/metrics")).status, 401);
+      assert.equal(
+        (await request("/metrics", { authorization: "Bearer wrong" })).status,
+        401,
+      );
+      const result = await request("/metrics", {
+        authorization: "Bearer integration-metrics-secret",
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.body.errors.client > 0, true);
+      assert.equal(
+        result.body.requests.some(
+          (item) => item.route === "/health/" && item.status === 200,
+        ),
+        true,
+      );
+      assert.doesNotMatch(
+        JSON.stringify(result.body),
+        /integration-metrics-secret|access_token/,
+      );
+    },
+  );
   const user = await makeUser("auth@example.com");
   await t.test("cookie lifetime and invalid credentials", async () => {
     assert.equal(

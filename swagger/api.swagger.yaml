@@ -1,5 +1,6 @@
 tags:
   - name: Health
+  - name: Metrics
   - name: Auth
   - name: Email
   - name: OTP
@@ -12,6 +13,10 @@ components:
       in: cookie
       name: access_token
       description: Default name from .env.example; change this specification if COOKIE_NAME is configured differently.
+    metricsBearer:
+      type: http
+      scheme: bearer
+      description: Separate operator token from METRICS_TOKEN; the access cookie does not grant metrics access.
   schemas:
     ObjectId:
       type: string
@@ -321,6 +326,37 @@ components:
                       type: boolean
                     email:
                       type: boolean
+    MetricsResponse:
+      type: object
+      properties:
+        uptimeSeconds:
+          type: integer
+          description: Seconds since metrics collection began in this process.
+        requests:
+          type: array
+          items:
+            type: object
+            properties:
+              method:
+                type: string
+              route:
+                type: string
+                description: Matched route template, or <unmatched>.
+              status:
+                type: integer
+              count:
+                type: integer
+              totalDurationMs:
+                type: number
+        errors:
+          type: object
+          properties:
+            client:
+              type: integer
+              description: Total completed 4xx responses.
+            server:
+              type: integer
+              description: Total completed 5xx responses.
   parameters:
     UserId:
       name: id
@@ -355,7 +391,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
     Unauthorized:
-      description: Authentication cookie is missing or invalid.
+      description: Authentication or verification token is missing or invalid, or credentials were rejected.
       content:
         application/json:
           schema:
@@ -415,6 +451,24 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
+  /metrics:
+    get:
+      tags: [Metrics]
+      summary: Read process-local request and error metrics
+      description: Requires METRICS_TOKEN to be configured. Aggregates reset on process restart; no raw URLs, request bodies, or credentials are returned. Unauthorized requests return plain text, not the shared JSON error schema.
+      security:
+        - metricsBearer: []
+      responses:
+        "200":
+          description: Current metrics snapshot.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MetricsResponse"
+        "401":
+          description: METRICS_TOKEN is configured, but the bearer token is missing or incorrect.
+        "404":
+          description: METRICS_TOKEN is not configured.
   /api/v1/auth/signup:
     post:
       tags: [Auth]
@@ -564,6 +618,8 @@ paths:
                 $ref: "#/components/schemas/MessageResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -655,6 +711,20 @@ paths:
         - $ref: "#/components/parameters/UserId"
       requestBody:
         content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  minLength: 2
+                  example: "Jane"
+                lastName:
+                  type: string
+                  minLength: 2
+                  example: "Doe"
+                username:
+                  type: string
           multipart/form-data:
             schema:
               type: object
@@ -667,8 +737,8 @@ paths:
                   type: string
                   minLength: 2
                   example: "Doe"
-                email:
-                  $ref: "#/components/schemas/Email"
+                username:
+                  type: string
                 avatar:
                   type: string
                   format: binary
@@ -681,6 +751,10 @@ paths:
                 $ref: "#/components/schemas/UserResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -720,6 +794,8 @@ paths:
                 $ref: "#/components/schemas/NotificationListResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "500":
           $ref: "#/components/responses/InternalServerError"
   /api/v1/notifications/{notiId}:
@@ -740,5 +816,7 @@ paths:
                 $ref: "#/components/schemas/NotificationResponse"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
