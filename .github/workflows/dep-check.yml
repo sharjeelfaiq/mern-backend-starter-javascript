@@ -1,0 +1,35 @@
+name: Dependency check
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Outdated packages
+        run: |
+          {
+            echo "## npm outdated"
+            echo '```'
+            npm outdated || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Audit
+        run: |
+          {
+            echo "## npm audit (high and above)"
+            echo '```'
+            npm audit --audit-level=high 2>&1 && echo "No high or critical vulnerabilities."
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          npm audit --audit-level=high
