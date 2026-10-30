@@ -8,6 +8,10 @@ import { userRepository } from "./user.repository.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/**
+ * @param {{ avatar?: Array<{ path?: string, filename?: string }> } | undefined} files
+ * @returns {string | null}
+ */
 const getUploadedProfilePicture = (files) => {
   const avatar = files?.avatar?.[0];
   if (!avatar) return null;
@@ -16,6 +20,7 @@ const getUploadedProfilePicture = (files) => {
 };
 
 export const userService = {
+  /** @returns {Promise<{ message: string, data: unknown[] }>} */
   getAll: async () => {
     const users = await userRepository.findAllUsers();
     if (!users.length) throw createError(404, "Users not found");
@@ -25,6 +30,10 @@ export const userService = {
     };
   },
 
+  /**
+   * @param {{ id: string }} params
+   * @returns {Promise<{ message: string, data: unknown }>}
+   */
   getById: async ({ id }) => {
     const user = await userRepository.findUserById(id);
     if (!user) throw createError(404, "User not found");
@@ -34,6 +43,13 @@ export const userService = {
     };
   },
 
+  /**
+   * Updates only firstName, lastName and username, plus an uploaded avatar.
+   * @param {string} id
+   * @param {{ firstName?: string, lastName?: string, username?: string }} userData
+   * @param {Parameters<typeof getUploadedProfilePicture>[0]} files
+   * @returns {Promise<{ message: string, data: unknown }>}
+   */
   updateById: async (id, userData, files) => {
     const editableFields = ["firstName", "lastName", "username"];
     if (Object.keys(userData).some((key) => !editableFields.includes(key))) {
@@ -70,6 +86,10 @@ export const userService = {
     };
   },
 
+  /**
+   * @param {string} id
+   * @returns {Promise<{ message: string, data: unknown }>}
+   */
   deleteById: async (id) => {
     const user = await userRepository.deleteUserById(id);
     if (!user) throw createError(404, "User not found");

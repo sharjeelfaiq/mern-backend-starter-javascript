@@ -8,7 +8,30 @@ import { userRepository } from "../user/user.repository.js";
 
 const { BACKEND_URL, FRONTEND_URL } = env;
 
+/**
+ * @typedef {object} SignupInput
+ * @property {string} firstName
+ * @property {string} lastName
+ * @property {string} email
+ * @property {string} password
+ * @property {string} [username]
+ */
+
+/**
+ * @typedef {object} SigninInput
+ * @property {string} [email]
+ * @property {string} [username]
+ * @property {string} password
+ * @property {boolean} [isRemembered]
+ */
+
 export const authService = {
+  /**
+   * Registers a user and sends the email verification link. The user is
+   * removed again if the token or the email cannot be produced.
+   * @param {SignupInput} input
+   * @returns {Promise<{ message: string }>}
+   */
   signup: async ({ firstName, lastName, email, password, username }) => {
     const existingUser = await userRepository.findUserByEmail(email);
     if (existingUser)
@@ -59,6 +82,10 @@ export const authService = {
     };
   },
 
+  /**
+   * @param {SigninInput} input
+   * @returns {Promise<{ message: string, token: string, data: { id: unknown, name: string } }>}
+   */
   signin: async ({ email, username, password, isRemembered }) => {
     const existingUser = await userRepository.findUserByEmailOrUsername({
       email,
@@ -86,6 +113,10 @@ export const authService = {
     };
   },
 
+  /**
+   * @param {string | undefined} token Access token read from the cookie.
+   * @returns {Promise<{ message: string }>}
+   */
   signOut: async (token) => {
     if (!token) throw createError(400, "No token found");
 
@@ -99,6 +130,10 @@ export const authService = {
     };
   },
 
+  /**
+   * @param {{ email: string }} input
+   * @returns {Promise<{ status: boolean, message: string }>}
+   */
   forgotPassword: async ({ email }) => {
     const existingUser = await userRepository.findUserByEmail(email);
     if (!existingUser) throw createError(404, "User not found");
@@ -125,6 +160,10 @@ export const authService = {
     };
   },
 
+  /**
+   * @param {{ token: string, password: string }} input
+   * @returns {Promise<{ status: boolean, message: string }>}
+   */
   resetPassword: async ({ token, password }) => {
     const decoded = verifyToken(token, "password-reset");
     if (!decoded)
