@@ -1,3 +1,4 @@
+import "colors";
 import mongoose from "mongoose";
 import { env } from "#config/env.config.js";
 import { logger } from "./logger.lib.js";
