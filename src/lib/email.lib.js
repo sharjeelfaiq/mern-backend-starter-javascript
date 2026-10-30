@@ -32,7 +32,6 @@ const getTransporter = () => {
     auth: { user: USER_EMAIL, pass: USER_PASSWORD },
     connectionTimeout: 60000,
     greetingTimeout: 30000,
-    sendTimeout: 30000,
   });
 
   return transporter;
