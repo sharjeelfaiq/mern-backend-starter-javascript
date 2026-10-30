@@ -4,7 +4,7 @@ Express 5 and MongoDB starter API with cookie based JWT authentication, email ve
 
 ## Setup
 
-Use Node.js 20.19 or later in the 20.x line and npm 10 or later. Copy `.env.example` to `.env`, set MongoDB, SMTP, Cloudinary, and a strong JWT secret, then run:
+Use Node.js 20.19 or later in the 20.x line (`.nvmrc` pins 20.19.0, which CI uses) and npm 10 or later. Copy `.env.example` to `.env`, set MongoDB, SMTP, Cloudinary, and a strong JWT secret, then run:
 
 ```bash
 npm ci
@@ -41,11 +41,12 @@ This starts the API, MongoDB, and [MailDev](https://github.com/maildev/maildev),
 ```bash
 npm run lint
 npm run format:check
+npm run typecheck       # tsc checkJs over src/ using jsconfig.json (non-strict; JSDoc on the auth and user services)
 npm test
-npm run test:coverage   # runs the tests under c8 and fails below 70% line coverage (.c8rc.json)
+npm run test:coverage   # runs the tests under c8 and fails below 80% line coverage (.c8rc.json)
 ```
 
-Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. If the download is unavailable, set `MONGOMS_SYSTEM_BINARY` to the path of a compatible local `mongod` executable before running tests. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. Unit tests (`test/*.service.test.js`, `test/email.lib.test.js`) mock the repositories and need no database; `test/integration.test.js` exercises the HTTP API. CI runs installation, `npm audit --audit-level=high`, lint, format check, and the tests with the coverage gate on Node 20.
+Tests use `mongodb-memory-server` and may download a MongoDB binary on the first run. If the download is unavailable, set `MONGOMS_SYSTEM_BINARY` to the path of a compatible local `mongod` executable before running tests. They set their own test environment, use port 0, and stub email delivery. The test command fails if no test succeeds. Every test file except `test/integration.test.js` is a unit test that mocks repositories, models, or the database connection and needs no database; `test/integration.test.js` exercises the HTTP API against an in-memory MongoDB. CI runs `npm ci`, `npm audit --audit-level=high`, lint, format check, typecheck, and the tests with the coverage gate on the Node version in `.nvmrc`. A separate weekly workflow (`.github/workflows/dep-check.yml`, also runnable manually) writes `npm outdated` and `npm audit` summaries to the job log and fails when a high-severity advisory is found.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow and [CHANGELOG.md](CHANGELOG.md) for changes in this checkout.
 

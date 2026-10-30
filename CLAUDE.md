@@ -11,14 +11,15 @@ npm run dev              # nodemon src/app.js
 npm start                # node src/app.js (connects to MongoDB before listening)
 npm run lint             # eslint
 npm run format:check     # prettier --check (npm run format to fix)
+npm run typecheck        # tsc --noEmit -p jsconfig.json (checkJs, non-strict)
 npm test                 # node scripts/run-tests.mjs
 npm run test:coverage    # same under c8; fails below the line-coverage threshold in .c8rc.json
 docker compose up --build  # API + MongoDB + MailDev (fake SMTP), no external accounts
 ```
 
-CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm audit --audit-level=high`, lint, format:check, and test:coverage on Node 20.19.
+CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm audit --audit-level=high`, lint, format:check, typecheck, and test:coverage on the Node version in `.nvmrc` (20.19.0). `.github/workflows/dep-check.yml` runs weekly (and on demand) to report `npm outdated` and `npm audit`.
 
-Tests use the built-in `node:test` runner. `scripts/run-tests.mjs` runs every `test/*.test.js` and fails if zero tests pass. `test/integration.test.js` drives the HTTP API with `mongodb-memory-server` (downloads a MongoDB binary on first run, or uses `MONGOMS_SYSTEM_BINARY`); other test files need no database and may stub repositories with `mock.method` or run an isolated HTTP app. Unit test files must `import "./helpers/env.js"` first, because env is parsed at import time. To run a subset, bypass the wrapper: `node --test --test-name-pattern="<pattern>" test/<file>.test.js`.
+Tests use the built-in `node:test` runner. `scripts/run-tests.mjs` runs every `test/*.test.js` and fails if zero tests pass. `test/integration.test.js` drives the HTTP API with `mongodb-memory-server` (downloads a MongoDB binary on first run, or uses `MONGOMS_SYSTEM_BINARY`); other test files need no database and may stub repositories or models with `mock.method` or run an isolated HTTP app. Unit test files must `import "./helpers/env.js"` first, because env is parsed at import time. To run a subset, bypass the wrapper: `node --test --test-name-pattern="<pattern>" test/<file>.test.js`.
 
 ## Architecture
 
