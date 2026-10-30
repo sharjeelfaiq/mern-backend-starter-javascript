@@ -431,3 +431,11 @@ test("recovery tokens, OTP consumption, and delivery cleanup", async (t) => {
     }
   });
 });
+
+test("validated endpoints answer 400 when the request has no JSON body", async () => {
+  for (const path of ["/api/v1/auth/signin", "/api/v1/auth/signup"]) {
+    const response = await request(path, { method: "POST" });
+    assert.equal(response.status, 400);
+    assert.match(response.body.message, /^Validation failed/);
+  }
+});
