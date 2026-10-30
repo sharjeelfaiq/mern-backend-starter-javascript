@@ -9,6 +9,7 @@
 - Added `npm run typecheck` (`jsconfig.json`, `checkJs`, non-strict) with JSDoc signatures for the auth and user services, and a CI step.
 - CI now reads the Node version from `.nvmrc` (20.19.0), caches by `package-lock.json`, and a weekly `dep-check` workflow reports outdated packages and audit results.
 - Raised the coverage gate to 80% line coverage and added unit tests for the notification, OTP, and user repositories, `file`, `token`, `cookie`, `otp`, `metrics`, `database`, and `errorReporter` libs, the validation middleware, and the health and email services.
+- Documented in SECURITY.md what a registered error reporter receives.
 - Added a CONTRIBUTING section on pull requests and review.
 - Added restricted in-process request and error metrics with operator access documentation.
 - Expanded tests for notification service behavior, OTP verification, user controllers, global request validation, and metrics.
