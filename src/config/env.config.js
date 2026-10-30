@@ -40,6 +40,10 @@ const validators = {
   CLOUDINARY_API_KEY: str({ desc: "Cloudinary API key" }),
   CLOUDINARY_API_SECRET: str({ desc: "Cloudinary API secret" }),
   METRICS_TOKEN: str({ default: "" }),
+  ERROR_TRACKING_DSN: str({
+    default: "",
+    desc: "Passed to the registered error reporter; nothing is sent without one",
+  }),
 };
 
 export const env = cleanEnv(process.env, validators, {

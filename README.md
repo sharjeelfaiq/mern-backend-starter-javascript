@@ -23,6 +23,10 @@ curl -H "Authorization: Bearer $METRICS_TOKEN" http://localhost:8000/metrics
 
 Keep the token private and use HTTPS or a trusted private network. Counters reset when the process restarts and are per process; combine them externally if running multiple instances. The response contains no raw URLs, request bodies, or tokens.
 
+### Error reporting
+
+Server errors (HTTP 5xx) are logged and can also be forwarded to an error-tracking service. The API ships no vendor SDK: register a reporter with `setErrorReporter(fn)` from `src/lib/errorReporter.lib.js` (for example in `src/app.js`, wrapping Sentry) and it receives the error plus `{ status, method, path, dsn }` for every 5xx response. `dsn` is the optional `ERROR_TRACKING_DSN` setting, empty when unset. Without a registered reporter nothing is sent anywhere. A reporter that throws is logged and never changes the response. 4xx errors are not reported.
+
 ### Docker (no external accounts)
 
 ```bash

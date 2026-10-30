@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-Requires Node.js 20.19+ (20.x) and npm 10+. Copy `.env.example` to `.env` before running the API; `src/config/env.config.js` validates required variables with envalid and exits the process if any is missing or invalid. `METRICS_TOKEN` is optional.
+Requires Node.js 20.19+ (20.x) and npm 10+. Copy `.env.example` to `.env` before running the API; `src/config/env.config.js` validates required variables with envalid and exits the process if any is missing or invalid. `METRICS_TOKEN` and `ERROR_TRACKING_DSN` are optional.
 
 ```bash
 npm run dev              # nodemon src/app.js
@@ -36,6 +36,7 @@ ESM-only Express 5 + Mongoose API. Internal imports use the `imports` map in `pa
 - JWTs have distinct purposes (access, email verification, password reset) — see `src/lib/token.lib.js`. The access token goes in an HTTP-only cookie (`COOKIE_NAME`), short or long expiry depending on `isRemembered`.
 - Email goes through `src/lib/email.lib.js`, which exposes `setTestEmailSender` so tests stub delivery; HTML templates are in `src/views/`.
 - File uploads: multer + Cloudinary (`upload.middleware.js`, `cloudinary.lib.js`).
+- `src/lib/errorReporter.lib.js` lets a deployment register a 5xx error reporter (`setErrorReporter`); the global error handler calls it, and nothing is sent without one.
 - `src/server/sockets.js` holds the socket.io setup.
 
 API docs: `swagger/api.swagger.yaml` (served at `/api-docs/`) and the Postman collection; update both when changing endpoints. Operator metrics use `METRICS_TOKEN` rather than the access cookie and return in-memory aggregate counts only.

@@ -10,6 +10,7 @@ import createError from "http-errors";
 
 import { env } from "#config/env.config.js";
 import { logger } from "#lib/logger.lib.js";
+import { reportError } from "#lib/errorReporter.lib.js";
 import { getMetrics, requestMetrics } from "#lib/metrics.lib.js";
 import { swaggerConfig } from "#config/swagger.config.js";
 
@@ -34,10 +35,17 @@ const serializeError = (err, nodeEnv = NODE_ENV) => {
 };
 
 // eslint-disable-next-line no-unused-vars
-const errorHandler = async (err, _, res, __) => {
+const errorHandler = async (err, req, res, __) => {
   const errorResponse = serializeError(err);
 
   logger.error(JSON.stringify(errorResponse, null, 2));
+  if (errorResponse.status >= 500) {
+    await reportError(err, {
+      status: errorResponse.status,
+      method: req.method,
+      path: req.originalUrl,
+    });
+  }
   res.status(errorResponse.status).json(errorResponse);
 };
 
